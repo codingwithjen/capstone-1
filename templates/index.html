@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}index{% endblock %}
+<!-- {% block before_scripts %}{% endblock %} -->
+
+{% block content %}
+
+<section class="py-5 text-center container mt-5">
+    <div class="row py-5 text-center justify-content-md-center">
+      <div class="col-md-7 col-lg-5">
+        <div class="col-lg-6 col-md-8 mx-auto mb-5">
+        <h1 class="fw-light">Weather API Flask App</h1>
+        </div>
+        <form method="POST" id="weather-form" action="/">
+          {{ form.hidden_tag() }}
+
+          {% for field in form if field.widget.input_type != 'hidden' %}
+          {% for error in field.errors %}
+          <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+          {{ field(placeholder=field.label.text, class="form-control") }}
+          {% endfor %}
+          <button type="submit" class="btn btn-outline-primary">Submit!</button>
+        </form>
+      </div>
+    </div>
+
+
+
+<script id="result_template" type="text/html">
+    <div class="inner">
+    {{ current }}
+        <h1>{{ city }}</h1>
+        <p>{{ country }}</p>
+        <p class="h5">Current Date and Time:  {{ datetime }}</p>
+        <p>{{ timezone }}</p>
+        <p>{{ sun }}</p>
+        <i class= "icon wi wi-owm-{{ iconcode }}"></i>
+        <p>{{ description }}</p>
+        <p class ="h5"> {{ fahrenheit }} ° Fahrenheit</p>
+        <p class="h5"> {{ celsius }} ° Celsius</p>
+        <p>{{ lastupdate }}</p>
+        {{ saved }}
+        <!-- Remove Bookmark -->
+        <form action="/remove_bookmark" method="POST">
+            <input id="city" name="city" type="text" value="{{ city }}" style = "display: None">
+            <button type="submit" class="btn btn-outline-info">Remove</button>
+        </form>
+        {{ saved }}
+        {{ saved }}
+
+        <!-- Bookmark City -->
+        <form action="/bookmark_city" method="POST">
+            <input id="city" name="city" type="text" value="{{ city }}" style = "display: None">
+            <button type="submit" class="btn btn-outline-info">Bookmark</button>
+        </form>
+        {{ saved }}
+    {{ current }}
+
+    </div>
+
+    <div class="forecast-container">
+        <div class="row">
+        {{ forecast }}
+        <div class="col-sm">
+            <p class="h5">{{ datetime }}</p><br/>
+            <i class= "icon wi wi-owm-{{ iconcode }}"></i>
+            <p>{{ description }}</p>
+            <p class ="h5"> {{ fahrenheit }} ° Fahrenheit</p>
+            <p class="h5"> {{ celsius }} ° Celsius</p>
+        </div>
+        {{ forecast }}
+        </div>
+        </div>
+</script>
+</section>
+
+
+<div id="results"></div>
+
+
+{% block after_scripts %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/fetch.js') }}"></script>
+    <!-- Mustache -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
+{% endblock %}
+{% endblock %}
