@@ -1,7 +1,9 @@
 """Database models for Weather Flask Application."""
 
+from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 
+bcrypt = Bcrypt()
 db = SQLAlchemy()
 
 # DO NOT MODIFY
@@ -26,6 +28,28 @@ class User(db.Model):
     def __repr__(self):
         return f<"User #{self.id}: {self.username}, {self.email} >"
 
+    @classmethod
+    def register(cls, username, pwd):
+        """Register user with hashed password and return user."""
+
+        hashed = bcrypt.generate_password_hash(pwd)
+        # turn bytestring into normal (unicode utf8) string
+        hashed_utf8 = hashed.decode("utf8")
+
+        # return instance of user with username and hashed password."""
+        return cls(username=username, password=hashed_utf8)
+
+    @classmethod
+    def authenticate(cls, username, pwd):
+        """Validate that the user exists and password is correct. Return user if validl else return False."""
+
+        u = User.query.filter_by(username=username).first()
+
+        if u and bcrypt.check_password_hash(u.password, pwd):
+            # return user instance
+            return u
+        else:
+            return False
 
 # Create the City Model
 

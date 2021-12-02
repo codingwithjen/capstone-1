@@ -1,9 +1,12 @@
+bcrypt==3.2.0
 blinker==1.4
 certifi==2021.10.8
+cffi==1.15.0
 charset-normalizer==2.0.8
 click==8.0.3
 Flask==2.0.2
 Flask-DebugToolbar==0.11.0
+Flask-SQLAlchemy==2.5.1
 Flask-WTF==1.0.0
 greenlet==1.1.2
 idna==3.3
@@ -11,7 +14,9 @@ itsdangerous==2.0.1
 Jinja2==3.0.3
 MarkupSafe==2.0.1
 psycopg2-binary==2.9.2
+pycparser==2.21
 requests==2.26.0
+six==1.16.0
 SQLAlchemy==1.4.27
 urllib3==1.26.7
 Werkzeug==2.0.2
