@@ -11,15 +11,13 @@ CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 
-# app.config["SQLALCHEMY_DATABASE_URI"] = (os.environ.get("DATABASE_URL", "postgresql:///weather"))
-# app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "c0rg1$rul3!")
-
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///weather"
-app.config['SECRET_KEY'] = "oh-so-secret"
+# Get DB_URI from environ variable (useful for production/testing) or,
+# if not set there, use development local db.
+app.config["SQLALCHEMY_DATABASE_URI"] = (os.environ.get("DATABASE_URL", "postgresql:///weather"))
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "c0rg1$rul3!")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = True
-# debug = DebugToolbarExtension(app)
+debug = DebugToolbarExtension(app)
 
 connect_db(app)
 
@@ -46,7 +44,7 @@ def do_logout():
     """Logout user."""
 
     if CURR_USER_KEY in session:
-        del session[CURR_USER_KEY]   
+        del session[CURR_USER_KEY]
 
 #############################################################
 #####             Homepage and Error Pages              #####

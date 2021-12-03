@@ -1,7 +1,7 @@
 """Implements various helpers."""
 
 import requests
-from secrets import API_SECRET_KEY
+API_SECRET_KEY = "s"
 
 API_BASE_URL = "https://api.openweathermap.org/data/2.5/weather?q="
 
