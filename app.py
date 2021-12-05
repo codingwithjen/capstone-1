@@ -14,7 +14,7 @@ app = Flask(__name__)
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
 app.config["SQLALCHEMY_DATABASE_URI"] = (os.environ.get("DATABASE_URL", "postgresql:///weather"))
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "c0rg1$rul3!")
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "it's a secret")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = True
 debug = DebugToolbarExtension(app)

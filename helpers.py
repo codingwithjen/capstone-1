@@ -1,7 +1,7 @@
 """Implements various helpers."""
 
-import requests
-API_SECRET_KEY = "s"
+import os, requests
+from dotenv import load_dotenv
 
 API_BASE_URL = "https://api.openweathermap.org/data/2.5/weather?q="
 
