@@ -71,7 +71,7 @@ class City(db.Model):
     __tablename__ = "cities"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="cascade"))
 
     def serialize(self):
         """Returns a dict representation of city, which we can turn into JSON."""
