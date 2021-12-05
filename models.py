@@ -26,30 +26,42 @@ class User(db.Model):
     cities = db.relationship("City", backref="user", lazy=True)
 
     def __repr__(self):
-        return f<"User #{self.id}: {self.username}, {self.email} >"
+        return f"<User #{self.id}: {self.username}>"
 
     @classmethod
-    def register(cls, username, pwd):
-        """Register user with hashed password and return user."""
+    def signup(cls, username, pwd):
+        """Signup user with hashed password and return user."""
 
-        hashed = bcrypt.generate_password_hash(pwd)
-        # turn bytestring into normal (unicode utf8) string
-        hashed_utf8 = hashed.decode("utf8")
+        hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
 
-        # return instance of user with username and hashed password."""
-        return cls(username=username, password=hashed_utf8)
+        user = User(
+            username=username,
+            email=email,
+            password=hashed_pwd,
+        )
+
+        db.session.add(user)
+        return user
 
     @classmethod
-    def authenticate(cls, username, pwd):
-        """Validate that the user exists and password is correct. Return user if validl else return False."""
+    def authenticate(cls, username, password):
+        """Find user with `username` and `password.`
+        
+        This is a class method (call it on the class, not an individual user.)
+        It searches for a user whose password hash matches this password and,
+        if it finds such a user, returns that user object.
+        
+        If it can't find matching user (or if password is incorrect), returns False."""
 
-        u = User.query.filter_by(username=username).first()
+        user = cls.query.filter_by(username=username).first()
 
-        if u and bcrypt.check_password_hash(u.password, pwd):
-            # return user instance
-            return u
-        else:
-            return False
+        if user:
+            is_auth = bcrypt.check_password_hash(user.password, password)
+            if is_auth:
+                return user
+        
+        return False
+
 
 # Create the City Model
 
