@@ -1,7 +1,9 @@
 """Implements various helpers."""
 
 import os, requests
+from datetime import datetime
 from dotenv import load_dotenv
+
 
 API_BASE_URL = "https://api.openweathermap.org/data/2.5/weather?q="
 
