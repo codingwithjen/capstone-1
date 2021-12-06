@@ -3,7 +3,7 @@
 
 Versions I am currently using and instructions are based off of this<br>
 
-Python --version *3.9.6*<br>
+Python --version *3.9.6*<br> - you will need Python installed on a local environment<br>
 macOS Monterey *Version 12.0.1*<br>
 PostgreSQL *v13*<br>
 Check the *requirements.txt* file to see the different packages installed and their versions <br>
