@@ -21,7 +21,7 @@ def get_weather_data(city):
     weather_results = {
         'city': res['name'].title(),
         'country': res['sys']['country'].upper(),
-        'weather': res['weather'][0]['main']
+        'weather': res['weather'][0]['main'],
         'fahrenheit': '{0:2f}'.format(res['temp']['feels_like']),
     }
 

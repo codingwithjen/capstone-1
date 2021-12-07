@@ -56,4 +56,3 @@ def render_weather_results():
     weather_results = get_weather_data(city)   
     return redirect(url_for('index'))
 
-

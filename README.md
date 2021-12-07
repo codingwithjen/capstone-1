@@ -19,6 +19,7 @@ First, Git Clone the Repo in Command Line (Instructions for Mac Users):
 7. Sign up via OpenWeather for an API key - I have hidden this in my *.gitignore* file and via *dotenv*
 8. Once all the packages are installed, `export FLASK_ENV=development` and then ENTER (can set this once per terminal)
 9. Once you hit ENTER, type in `flask run`
+9.1 Or you can create a .env file in your root directory. That's where I put my API key and I hid it in my *.gitignore* :)
 10. Use your local server URL on a browser (I use Chrome) http://localhost:5000/.
 11. To end the live server, on the Terminal window, enter CONTROL + C
 12. 
