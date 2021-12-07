@@ -16,16 +16,21 @@ def kelvin_to_C(K):
     return int(K - 273.15)
 
 def get_weather_data(city):
-    res = requests.get(f"{API_BASE_URL}/data/2.5/weather?q={city}&appid={API_KEY}")
-    data = res.json()
-    weather_results = {
-        'city': res['name'].title(),
-        'country': res['sys']['country'].upper(),
-        'weather': res['weather'][0]['main'],
-        'fahrenheit': '{0:2f}'.format(res['temp']['feels_like']),
-    }
+    url = f'{API_BASE_URL}/data/2.5/weather?q={city}&appid={API_KEY}'
+    res = requests.get(url).json()
+    return res
 
-    return weather_results
+
+    # res = requests.get(f"{API_BASE_URL}/data/2.5/weather?q={city}&appid={API_KEY}")
+    # data = res.json()
+    # weather_results = {
+    #     'city': res['name'].title(),
+    #     'country': res['sys']['country'].upper(),
+    #     'weather': res['weather'][0]['main'],
+    #     'fahrenheit': '{0:2f}'.format(res['temp']['feels_like']),
+    # }
+
+    # return weather_results
 
 # def get_weather_data(city):
 #     res = requests.get(f"{API_BASE_URL}/city", params={'city': city, 'key': API_SECRET_KEY})

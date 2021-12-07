@@ -26,7 +26,7 @@ class User(db.Model):
     cities = db.relationship("City", backref="user", lazy=True)
 
     def __repr__(self):
-        return f"<User #{self.id}: {self.username}>"
+        return f"<User #{self.id}: {self.username}, {self.email}>"
 
     @classmethod
     def signup(cls, username, pwd):

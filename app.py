@@ -15,12 +15,12 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = (os.environ.get('DATABASE_URL', 'postgresql:///weather'))
 
 # the toolbar is only enabled in debug mode: set to False to disable
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 
-toolbar = DebugToolbarExtension(app)
+# toolbar = DebugToolbarExtension(app)
 login_manager = LoginManager()
 
 connect_db(app)
@@ -47,12 +47,55 @@ def index_page():
 #############################################################
 
 @app.route('/results', methods=['POST'])
-def render_weather_results():
-    """Render weather results from the user's search."""
+def index_weather_results():
+    """Render weather results from homepage."""
 
-    city = request.form['city']
-    zipcode = ''
-    countrycode = 'us'
-    weather_results = get_weather_data(city)   
-    return redirect(url_for('index'))
+    weather_data = []
 
+    for city in cities:
+        r = get_weather_data(city.name)
+        print(r)
+
+        weather = {
+            'city': city.name,
+            'temperature': r['main']['temp'],
+            'description': r['weather'][0]['description'],
+            'icon': r['weather'][0]['icon'],
+
+        }
+        weather_data.append(weather)
+    
+    return redirect(url_for('index', weather_data=weather_data))
+
+    # city = request.form['city']
+    # zipcode = ''
+    # countrycode = 'us'
+    # weather_results = get_weather_data(city)   
+    # return redirect(url_for('index'))
+
+#############################################################
+#####        Authenticated User's Dashboard             #####
+#############################################################
+
+# @app.route('/results', methods=['POST'])
+# def get
+
+
+#############################################################
+#####               Sign-Up User Page                   #####
+#############################################################
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    form = SignupForm()
+    if form.validate_on_submit():
+        hashed_pwd = bcrypt.generate_password_hash(form.password.data).decode('UTF-8')
+        user = User(username=form.username.data, email=form.email.data, password=hashed_pwd)
+
+        db.session.add(user)
+        db.session.commit()
+
+        flash(f'Account created for {form.username.data}!' f)
