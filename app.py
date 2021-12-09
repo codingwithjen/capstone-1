@@ -85,19 +85,16 @@ def index_weather_results():
 #####               Sign-Up User Page                   #####
 #############################################################
 
-@app.route('signup', methods=['GET', 'POST'])
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
     """Handle user signup.
-
     Create new user and add to DB. Redirect to home page.
-
     If form not valid, present form.
-
     If the there already is a user with that username: flash message
-    and re-present form.
-    """
+    and re-present form."""
+
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('index'))  
 
     form = SignupForm()
     if form.validate_on_submit():
@@ -119,6 +116,23 @@ def signup():
         return render_template('login.html', form=form)
 
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """Handle user login."""
 
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.authenticate(form.username.data, form.password.data)
+
+        if user:
+            login_user(user, remember=form.remember.data)
+            flash('You have successfully logged in!', 'success')
+            return redirect(url_for('get_dashboard')) 
+        else:
+            flash('Invalid credentials!', 'danger')
+    return render_template('login.html', title='Login', form=form)
 
 
