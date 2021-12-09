@@ -2,6 +2,7 @@
 
 import os, requests
 from helpers import get_weather_data
+from sqlalchemy.exc import IntegrityError
 from models import db, connect_db, User, City
 from flask_debugtoolbar import DebugToolbarExtension
 from forms import SignupForm, LoginForm, WeatherForm, BookmarkForm, RemoveBookmarkForm
@@ -25,6 +26,7 @@ login_manager = LoginManager()
 
 connect_db(app)
 
+
 #############################################################
 #####             Homepage and Error Pages              #####
 #############################################################
@@ -41,6 +43,7 @@ def index_page():
         city = form.city.data
         zipcode = form.zipcode.data
     return render_template('index.html', form=form)
+
 
 #############################################################
 #####              RESTFUL CITIES JSON API              #####
@@ -64,21 +67,8 @@ def index_weather_results():
 
         }
         weather_data.append(weather)
-    
+
     return redirect(url_for('index', weather_data=weather_data))
-
-    # city = request.form['city']
-    # zipcode = ''
-    # countrycode = 'us'
-    # weather_results = get_weather_data(city)   
-    # return redirect(url_for('index'))
-
-#############################################################
-#####        Authenticated User's Dashboard             #####
-#############################################################
-
-# @app.route('/results', methods=['POST'])
-# def get
 
 
 #############################################################
@@ -146,5 +136,53 @@ def logout():
 
     logout_user()
     flash("You have successfully logged out!", 'success')
-    return direct(url_for('login'))
+    return redirect(url_for('login'))
 
+
+#############################################################
+#####                  User Dashboard                   #####
+#############################################################
+
+@app.route('/dashboard')
+@login_required
+def get_dashboard():
+    """User dashboard."""
+
+    cities = City.query.filter_by(user_id=current_user.id).all()
+    return render_template('dashboard.html', title='Account', cities=cities)
+
+
+@app.route('/bookmark_city', methods=['GET', 'POST'])
+def bookmark_city():
+    """Enables user to bookmark a city/search."""
+
+    if current_user.is_authenticated:
+        city = request.form.get('city')
+        user = User.query.filter_by(id=current_user.id).first()
+        user_cities = user.cities
+        if city not in [c.name for c in user_cities]:
+            bookmarked_city = City(name=city, user_id=user.id)
+            db.session.add(bookmarked_city)
+            db.session.commit()
+        flash('{city.name} saved!', 'success')
+    else:
+        flash('Please login first.', 'danger')
+    return redirect(url_for('index'))
+
+
+@app.route('/delete/<name>')
+def remove_city(name):
+    """Delete city."""
+
+    if current_user.is_authenticated:
+        city = request.form.get('city')
+        user = User.query.filter_by(id=current_user.id).first()
+        user_cities = user.cities
+        if city in [c.name for c in user_cities]:
+            City.query.filter_by(name=city, user_id=current_user.id)
+            db.session.delete(city)
+            db.session.commit()
+            flash(f'Succesfully deleted and removed {city.name}!', 'success')
+        else:
+            flash('Please login!', 'danger')
+    return redirect(url_for('get_dashboard'))
