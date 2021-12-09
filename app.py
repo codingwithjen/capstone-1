@@ -188,3 +188,11 @@ def remove_city(name):
         else:
             flash('Please login!', 'danger')
     return redirect(url_for('get_dashboard'))
+
+
+#############################################################
+#####                                                   #####
+#############################################################
+
+if __name__ == '__main__':
+    app.run(debug=True)
