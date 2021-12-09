@@ -116,6 +116,10 @@ def signup():
         return render_template('login.html', form=form)
 
 
+#############################################################
+#####                Login/Logout Pages                 #####
+#############################################################
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """Handle user login."""
@@ -135,4 +139,12 @@ def login():
             flash('Invalid credentials!', 'danger')
     return render_template('login.html', title='Login', form=form)
 
+
+@app.route('/logout')
+def logout():
+    """Handle logout of user."""
+
+    logout_user()
+    flash("You have successfully logged out!", 'success')
+    return direct(url_for('login'))
 
