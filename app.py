@@ -85,17 +85,40 @@ def index_weather_results():
 #####               Sign-Up User Page                   #####
 #############################################################
 
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route('signup', methods=['GET', 'POST'])
 def signup():
+    """Handle user signup.
+
+    Create new user and add to DB. Redirect to home page.
+
+    If form not valid, present form.
+
+    If the there already is a user with that username: flash message
+    and re-present form.
+    """
     if current_user.is_authenticated:
         return redirect(url_for('index'))
 
     form = SignupForm()
     if form.validate_on_submit():
-        hashed_pwd = bcrypt.generate_password_hash(form.password.data).decode('UTF-8')
-        user = User(username=form.username.data, email=form.email.data, password=hashed_pwd)
+        try:
+            user = User(username=form.username.data,
+                    email=form.email.data,
+                    password=hashed_pwd,
+                    )
 
-        db.session.add(user)
-        db.session.commit()
+            db.session.commit()
+            flash(f'Account created for {form.username.data}! '
+                    f'You are now able to login.', 'success')
 
-        flash(f'Account created for {form.username.data}!' f)
+        except IntegrityError as e:
+            flash("Username already taken", 'danger')
+            return render_template('/signup.html', form=form)
+
+    else:
+        return render_template('login.html', form=form)
+
+
+
+
+
