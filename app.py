@@ -1,13 +1,18 @@
 """Your Weather Flask Application."""
 
-import os, requests
-from helpers import get_weather_data
+import os, json, string, requests
+from datetime import datetime
+from dotenv import load_dotenv
+# from helpers import get_weather_data
 from sqlalchemy.exc import IntegrityError
 from models import db, connect_db, User, City
 from flask_debugtoolbar import DebugToolbarExtension
 from forms import SignupForm, LoginForm, WeatherForm, BookmarkForm, RemoveBookmarkForm
 from flask import Flask, request, redirect, render_template, url_for, jsonify, flash, session
-from flask_login import LoginManager, login_user, logout_user, current_user, login_required
+from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
+
+API_KEY = os.environ.get('API_SECRET_KEY')
+API_BASE_URL = "https://api.openweathermap.org/"
 
 app = Flask(__name__)
 
@@ -26,7 +31,16 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+load_dotenv()
 connect_db(app)
+
+#############################################################
+#####                                                   #####
+#############################################################
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 
 #############################################################
@@ -46,32 +60,48 @@ def index_page():
         zipcode = form.zipcode.data
     return render_template('index.html', form=form)
 
-
 #############################################################
 #####              RESTFUL CITIES JSON API              #####
 #############################################################
 
-@app.route('/results', methods=['POST'])
-def index_weather_results():
-    """Render weather results from homepage."""
+@app.route('/fetch', methods=['GET', 'POST'])
+def fetch_weather_results():
+    """API endpoint to fetch weather results."""
 
-    weather_data = []
+    city = request.form['city']
+    countrycode = 'us'
+    zipcode = ''
 
-    for city in cities:
-        r = get_weather_data(city.name)
-        print(r)
+    if not city and not zipcode:
+        return jsonify({'error': 'Please enter in at least one field.'})
 
-        weather = {
-            'city': city.name,
-            'temperature': r['main']['temp'],
-            'description': r['weather'][0]['description'],
-            'icon': r['weather'][0]['icon'],
+    elif city:
+        city = city.lower()
+        city = string.capwords(city)
+        url = f'{API_BASE_URL}/data/2.5/weather?q={city}&appid={API_KEY}'
 
-        }
-        weather_data.append(weather)
+    #elif city:
+        # zipcode = zipcode.strip()
+        # url = f'{API_BASE_URL}/data/2.5/weather?zip={zipcode},{countrycode}&appid={API_KEY}'
 
-    return redirect(url_for('index', weather_data=weather_data))
+    # OpenWeatherAPI Response
+    res = requests.get(url).json()
 
+    if res.get('cod') != 200:
+        message = res.get('message', 'Invalid inquiry')
+        return jsonify({'error': message})
+
+    else:
+        weather_forecast = get_weather_forecast(res, API_KEY)   
+
+    if current_user.is_authenticated:
+        user = User.query.filter_by(id=current_user.id).first()
+        user_cities = user.cities
+        if city.lower() in [c.name.lower() for c in user_cities]:
+            weather_forecast['saved'] = True  
+
+
+    return jsonify(weather_forecast)
 
 #############################################################
 #####               Sign-Up User Page                   #####

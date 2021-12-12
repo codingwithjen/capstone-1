@@ -1,6 +1,7 @@
 """Database models for Weather Flask Application."""
 
 from flask_bcrypt import Bcrypt
+from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 
 bcrypt = Bcrypt()
@@ -14,7 +15,7 @@ def connect_db(app):
     db.init_app(app)
 
 # Create the User Model
-class User(db.Model):
+class User(db.Model, UserMixin):
     """Users in our database."""
 
     __tablename__ = "users"
