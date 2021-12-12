@@ -35,6 +35,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, unique=True, nullable=False)
     cities = db.relationship("City", backref="user", lazy=True)
+    likes = db.relationship("City", secondary='bookmarks')
 
     def __repr__(self):
         return f"<User #{self.id}: {self.username}, {self.email}>"
