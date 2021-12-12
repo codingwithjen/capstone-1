@@ -14,6 +14,16 @@ def connect_db(app):
     db.app = app
     db.init_app(app)
 
+# Create the Bookmarks Model
+class Bookmarks(db.Model):
+    """Mapping user bookmarks to cities searched."""
+
+    __tablename__ = 'bookmarks'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id, ondelete='cascade'))
+    cities_id = db.Column(db.Integer, db.ForeignKey('cities.id', ondelete='cascade'))
+
+
 # Create the User Model
 class User(db.Model, UserMixin):
     """Users in our database."""

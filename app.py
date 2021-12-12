@@ -5,8 +5,8 @@ from datetime import datetime
 from dotenv import load_dotenv
 # from helpers import get_weather_data
 from sqlalchemy.exc import IntegrityError
-from models import db, connect_db, User, City
 from flask_debugtoolbar import DebugToolbarExtension
+from models import db, connect_db, User, City, Bookmarks
 from forms import SignupForm, LoginForm, WeatherForm, BookmarkForm, RemoveBookmarkForm
 from flask import Flask, request, redirect, render_template, url_for, jsonify, flash, session
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
