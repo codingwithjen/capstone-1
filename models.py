@@ -7,22 +7,15 @@ from flask_sqlalchemy import SQLAlchemy
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 
-# DO NOT MODIFY
-def connect_db(app):
-    """Connect to database."""
-
-    db.app = app
-    db.init_app(app)
-
 # Create the Bookmarks Model
 class Bookmarks(db.Model):
     """Mapping user bookmarks to cities searched."""
 
     __tablename__ = 'bookmarks'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id, ondelete='cascade'))
-    cities_id = db.Column(db.Integer, db.ForeignKey('cities.id', ondelete='cascade'))
 
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="cascade"))
+    city_id = db.Column(db.Integer, db, ForeignKey('cities.id', ondelete="cascade"))
 
 # Create the User Model
 class User(db.Model, UserMixin):
@@ -33,9 +26,10 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
-    password = db.Column(db.String, unique=True, nullable=False)
-    cities = db.relationship("City", backref="user", lazy=True)
-    likes = db.relationship("City", secondary='bookmarks')
+    password = db.Column(db.String, nullable=False)
+    cities = db.relationship('City')
+
+    bookmarks = db.relationship('City', secondary="bookmarks")
 
     def __repr__(self):
         return f"<User #{self.id}: {self.username}, {self.email}>"
@@ -82,17 +76,27 @@ class City(db.Model):
 
     __tablename__ = "cities"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(30), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="cascade"))
+    name = db.Column(db.String(30), unique=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="cascade"), nullable=False)
+    user = db.relationship('User')
 
-    def serialize(self):
-        """Returns a dict representation of city, which we can turn into JSON."""
 
-        return {
-            "id": self.id,
-            "name": self.name,
-        }
+    # def serialize(self):
+    #     """Returns a dict representation of city, which we can turn into JSON."""
 
-    def __repr__(self):
-        return f"<City {self.id} name={self.name} >"
+    #     return {
+    #         "id": self.id,
+    #         "name": self.name,
+    #     }
+
+    # def __repr__(self):
+    #     return f"<City {self.id} name={self.name} >"
+
+
+# DO NOT MODIFY
+def connect_db(app):
+    """Connect to database."""
+
+    db.app = app
+    db.init_app(app)
 

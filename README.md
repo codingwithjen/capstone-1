@@ -8,6 +8,7 @@ macOS Monterey *Version 12.0.1*<br>
 PostgreSQL *v13*<br>
 Check the *requirements.txt* file to see the different packages installed and their versions <br>
 
+# Set Up
 
 First, Git Clone the Repo in Command Line (Instructions for Mac Users):
 1. COMMAND + SPACE BAR and type in search "terminal"
@@ -23,5 +24,12 @@ First, Git Clone the Repo in Command Line (Instructions for Mac Users):
 10. Use your local server URL on a browser (I use Chrome) http://localhost:5000/.
 11. To end the live server, on the Terminal window, enter CONTROL + C
 12. 
+
+---
+
+### Sources:
+
+1. [user_obj.is_authenticated] (https://www.rithmschool.com/courses/intermediate-flask/authentication-with-flask-login)<br>
+2. [Unique Index] (https://forum.inductiveautomation.com/t/insert-into-database-only-if-the-entry-doesnt-exist/35122/10)
 
 
