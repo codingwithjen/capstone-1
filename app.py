@@ -8,7 +8,7 @@ from sqlalchemy.orm import query
 from sqlalchemy.exc import IntegrityError
 from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User, City, Bookmarks
-from forms import SignupForm, LoginForm, WeatherForm, BookmarkForm, RemoveBookmarkForm
+from forms import SignupForm, LoginForm, WeatherForm
 from flask import Flask, request, redirect, render_template, url_for, jsonify, flash, session
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 
@@ -102,12 +102,6 @@ def get_weather_forecast(res, API_KEY):
     return weather_forecast
 
 
-# @app.errorhandler(404)
-# def page_not_found(e):
-#     """404 NOT FOUND page."""
-
-#     return render_template('404.html'), 404
-
 #############################################################
 #####             Homepage and Error Pages              #####
 #############################################################
@@ -125,6 +119,14 @@ def index_page():
         zipcode = form.zipcode.data
     return render_template('index.html', city=city, zipcode=zipcode)
 
+
+# @app.errorhandler(404)
+# def page_not_found(e):
+#     """404 NOT FOUND page."""
+
+#     return render_template('404.html'), 404
+
+
 #############################################################
 #####              RESTFUL CITIES JSON API              #####
 #############################################################
@@ -134,7 +136,7 @@ def fetch_weather_results():
     """API endpoint to fetch weather results."""
 
     city = request.form['city']
-    countrycode = 'us'
+    countrycode = 'us'  
     zipcode = ''
 
     if not city and not zipcode:
@@ -162,7 +164,7 @@ def fetch_weather_results():
     if current_user.is_authenticated:
         user = User.query.filter_by(id=current_user.id).first()
         user_cities = user.cities
-        if city in [city.name for city in user_cities]:   
+        if city in [c.name for c in user_cities]:   
             weather_forecast['saved'] = True   
 
     return jsonify(weather_forecast)
@@ -186,21 +188,22 @@ def signup():
     form = SignupForm()
     if form.validate_on_submit():
         try:
-            user = User(username=form.username.data,
+            user = User.signup(username=form.username.data,
                     email=form.email.data,
                     password=hashed_pwd,
                     )
-
+            db.session.add(user)
             db.session.commit()
-            flash(f'How exciting! Account created for {form.username.data}. '
+
+            flash(f'How exciting! Account created for {form.username.data}.'
                     f'You are now able to login!', 'success')
 
         except IntegrityError as e:
             flash("Username already taken", 'danger')
-            return render_template('/signup.html', form=form)
+            return render_template('signup.html', form=form)
 
     else:
-        return render_template('/users/login.html', title='Login', form=form)
+        return render_template('users/login.html', title='Login', form=form)
 
 
 #############################################################
@@ -212,7 +215,7 @@ def login():
     """Handle user login."""
 
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('index'))  
 
     form = LoginForm()
     if form.validate_on_submit():
@@ -220,11 +223,11 @@ def login():
 
         if user:
             login_user(user)
-            flash('Hello, {user.username}!', 'success')
+            flash(f'Hello, {user.username}!', 'success')
             return redirect(url_for('index'))
         else:
             flash('Invalid credentials!', 'danger')
-    return render_template('/users/login.html', title='Login', form=form)
+    return render_template('users/login.html', title='Login', form=form)
 
 
 @app.route('/logout')
@@ -240,81 +243,50 @@ def logout():
 #####                  User Dashboard                   #####
 #############################################################
 
-@app.route('/users', methods=['GET'])
-@login_required
-def users_index():
-    """If user is logged in, it shows the user's dashboard of bookmarked cities.
-
-    Can take a 'q' param in querystring to search by that city name."""
-
-    if current_user.is_authenticated:
-
-    search = request.args.get('q')
-    cities = None
-    if search is None or search == '':
-        cities = City.query.all()
-    else:
-        cities = City.query.filter(City.name.bookmarks(f'%{search}%')).all()
-    return render_template('users/index.html', cities=cities)
-
 @app.route('/users/<int:user_id>', methods=['GET'])
 @login_required
 def users_show(user_id):
-    """Show user's dashboard."""
+    """Show the logged in user's dashboard.
+       This is the index page for the user.
+       This will gather the user's bookmarked cities."""
 
-    if current_user.is_authenticated:
+    user = User.query.get_or_404(user_id)
+    bookmarks = Bookmarks.query.filter.(Bookmarks.user_id == user.id).all()
+    return render_template('users/.html', user=user, bookmarks=bookmarks)
 
-    cities = (City
-              .query
-              .filter(City.user_id == user_id)
-              .order_by(City.timestamp.desc())
-              .limmit(3)
-              .all())
+@app.route('/bookmark-city', methods=['GET', 'POST'])
+@login_required
+def bookmark_city():
+    """Adds city to the user's bookmars list."""
 
-    bookmarks = [city.name for city in city.bookmarks]
-    return render_template('users/show.html', cities=cities, bookmarks=bookmarks)
+    user = User.query.get_or_404(user_id)   
 
+    if not user:
+        flash("Access unauthorized. Please login,", 'danger')
+        return redirect('/')
 
-#############################################################
-#####                  User Dashboard                   #####
-#############################################################
+    saved_city = City.query.get_or_404(city_id)
+    if saved_city.user_id == user.id:
+        return abort(403)
+    
+    user_bookmarks = user.bookmarks
 
+    if saved_city in user_bookmarks:
+        user.bookmarks = [bookmark for bookmark in user_bookmarks if bookmark != saved_city]
+    else:
+        user.booksmarks.append(saved_city)
 
-
-# @app.route('/bookmark_city', methods=['POST'])
-# def bookmark_city():
-#     """Enables user to bookmark a city/search."""
-
-#     if current_user.is_authenticated:
-#         city = request.form.get('city')
-#         user = User.query.filter_by(id=current_user.id).first()
-#         user_cities = user.cities
-#         if city not in [city.name for city in user_cities]:
-#             bookmarked_city = City(name=city, user_id=user.id)
-#             db.session.add(bookmarked_city)
-#             db.session.commit()
-#         flash('{city.name} saved!', 'success')
-#     else:
-#         flash('Please login first.', 'danger')
-#     return redirect(url_for('index'))
+    db.session.commit()
+    return redirect(f'/users/index')
 
 
-# @app.route('/delete/<name>')
-# def remove_city(name):
-#     """Delete city."""
 
-#     if current_user.is_authenticated:
-#         city = request.form.get('city')
-#         user = User.query.filter_by(id=current_user.id).first()
-#         user_cities = user.cities
-#         if city in [c.name for c in user_cities]:
-#             City.query.filter_by(name=city, user_id=current_user.id)
-#             db.session.delete(city)
-#             db.session.commit()
-#             flash(f'Succesfully deleted and removed {city.name}!', 'success')
-#         else:
-#             flash('Please login!', 'danger')
-#     return redirect(url_for('get_dashboard'))
+
+
+
+
+
+
 
 
 ##########################################################################

@@ -46,7 +46,6 @@ class User(db.Model, UserMixin):
             password=hashed_pwd,
         )
 
-        db.session.add(user)
         return user
 
     @classmethod
@@ -79,19 +78,6 @@ class City(db.Model):
     name = db.Column(db.String(30), unique=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="cascade"), nullable=False)
     user = db.relationship('User')
-
-
-    # def serialize(self):
-    #     """Returns a dict representation of city, which we can turn into JSON."""
-
-    #     return {
-    #         "id": self.id,
-    #         "name": self.name,
-    #     }
-
-    # def __repr__(self):
-    #     return f"<City {self.id} name={self.name} >"
-
 
 # DO NOT MODIFY
 def connect_db(app):

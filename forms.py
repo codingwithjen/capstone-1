@@ -21,14 +21,14 @@ class WeatherForm(FlaskForm):
     city = StringField("City", validators=[Optional()])
     zipcode = StringField("Zip Code", validators=[Optional(), Length(min=5, max=15)])
 
-class BookmarkForm(FlaskForm):
-    """Gives logged in user the ability to bookmark a city so
-    they don't have to resubmit search again."""
+# class BookmarkForm(FlaskForm):
+#     """Gives logged in user the ability to bookmark a city so
+#     they don't have to resubmit search again."""
 
-    submit = SubmitField("Bookmark")
+#     submit = SubmitField("Bookmark")
 
-class RemoveBookmarkForm(FlaskForm):
-    """"Gives logged in user the ability to remove a bookmark from
-    their dashboard."""
+# class RemoveBookmarkForm(FlaskForm):
+#     """"Gives logged in user the ability to remove a bookmark from
+#     their dashboard."""
 
-    submit = SubmitField("Remove")
+#     submit = SubmitField("Remove")
