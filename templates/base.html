@@ -13,6 +13,8 @@
     <!-- JQuery -->
 
     <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://kit.fontawesome.com/23ad47a316.js" crossorigin="anonymous"></script>
 
     {% block before_scripts %}{% endblock %}
 
@@ -29,22 +31,23 @@
 <body>
   <!-- Header -->
     <header class="site-header">
-        <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+        <nav class="navbar navbar-expand-md navbar-dark bg-primary fixed-top">
           <div class="container">
+
             <!-- Logo -->
 
             <!-- <a class="navbar-brand" href="#">
             <img src="/static/imgs/Weather-The-Trip.jpg" alt="" width="30" height="24">
         </a> -->
 
-            <a class="navbar-brand mr-4" href="/">Weather API Flask App</a>
+            <a class="navbar-brand mr-4" href="/">Weather API Flask App <i class="fas fa-cloud-sun"></i></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarToggle">
               <div class="navbar-nav mr-auto">
-               <a class="nav-item nav-link" href="/">Home</a>
+               <a class="nav-item nav-link" href="/">&nbsp;&nbsp; Home</i></a>
               </div>
 
               <!-- Navbar Right Side -->
@@ -60,7 +63,7 @@
                   {% else %}
                   <li class="nav-item">
                     <a class="nav-link " href="/login"> <button class='btn btn-info'>Login</button></a>
-                  <a class="nav-link " href="/signup"> <button class='btn btn-info'>Signup</button></a>
+                  <a class="nav-link " href="/signup"> <button class='btn btn-info'>Sign Up!</button></a>
               </li>
                  {% endif %}
     </ul>
@@ -81,7 +84,7 @@
       <footer class="footer mt-auto bg-light">
         <div class="container">
           <ul class="bd-footer-links list-unstyled">
-            <li class=""><a href="https://github.com/codingwithjen/capstone1">GitHub Repo</a></li>
+            <li class="text-center"><a href="https://github.com/codingwithjen/capstone1">GitHub Repo <i class="fa fa-github"></i></a></li>
           </ul>
         </div>
       </footer>

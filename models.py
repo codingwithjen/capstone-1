@@ -15,7 +15,7 @@ class Bookmarks(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="cascade"))
-    city_id = db.Column(db.Integer, db, ForeignKey('cities.id', ondelete="cascade"))
+    city_id = db.Column(db.Integer, db.ForeignKey('cities.id', ondelete="cascade"))
 
 # Create the User Model
 class User(db.Model, UserMixin):

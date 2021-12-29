@@ -4,13 +4,13 @@ import os, json, string, requests
 
 from datetime import datetime
 from dotenv import load_dotenv
-from sqlalchemy.orm import query
+# from sqlalchemy.orm import query
 from sqlalchemy.exc import IntegrityError
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db, connect_db, User, City, Bookmarks
+from models import db, connect_db, User, City
 from forms import SignupForm, LoginForm, WeatherForm
 from flask import Flask, request, redirect, render_template, url_for, jsonify, flash, session
-from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
+from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 
 API_KEY = os.environ.get('API_SECRET_KEY')
 API_BASE_URL = "https://api.openweathermap.org/"
@@ -41,6 +41,8 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
 
+# Flask-login will try and load a user BEFORE every request
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -59,6 +61,7 @@ def kelvin_to_Celsius(K):
     return int(K - 273.15)
 
 # Date Time
+
 def timestamp_to_datetime(ts, timezone_offset=0):
     ts = ts + timezone_offset
     return datetime.fromtimestamp(ts).strftime("%m/%d %H:%M")
@@ -79,7 +82,7 @@ def get_daily_forecast(daily_weather):
 
 # Search City
 
-def get_weather_forecast(res, API_KEY):
+def get_eather_forecast(res, API_KEY):
     LON = res['coord']['lon']
     LAT = res['coord']['lat']
     url = f'{API_BASE_URL}/data/2.5/oncecall?lat={LAT}&lon={LON}&exclude=minutely,hourly&appid={API_KEY}'
@@ -108,16 +111,16 @@ def get_weather_forecast(res, API_KEY):
 
 @app.route('/', methods=['GET', 'POST'])
 def index_page():
-    """"Index homepage.
-        Renders HTML template that includes some JS.
-        Not part of JSON API! Weather add form to fetch API results."""
+    """Index homepage.
+    Renders HTML template that includes some JS.
+    Not part of JSON API! Weather form to fetch API results."""
 
     form = WeatherForm()
 
     if form.validate_on_submit():
         city = form.city.data
         zipcode = form.zipcode.data
-    return render_template('index.html', city=city, zipcode=zipcode)
+    return render_template('index.html', form=form)
 
 
 # @app.errorhandler(404)
@@ -137,7 +140,7 @@ def fetch_weather_results():
 
     city = request.form['city']
     countrycode = 'us'  
-    zipcode = ''
+    zipcode = request.form['zipcode']
 
     if not city and not zipcode:
         return jsonify({'error': 'Please enter in at least one field.'})
@@ -177,13 +180,13 @@ def fetch_weather_results():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     """Handle user signup.
-    Create new user and add to DB. Redirect to home page.
+    Create new user and add to DB.
     If form not valid, present form.
     If the there already is a user with that username: flash message
     and re-present form."""
 
     if current_user.is_authenticated:
-        return redirect(url_for('index'))  
+        return redirect(url_for('index'))
 
     form = SignupForm()
     if form.validate_on_submit():
@@ -251,42 +254,31 @@ def users_show(user_id):
        This will gather the user's bookmarked cities."""
 
     user = User.query.get_or_404(user_id)
-    bookmarks = Bookmarks.query.filter.(Bookmarks.user_id == user.id).all()
-    return render_template('users/.html', user=user, bookmarks=bookmarks)
+    bookmarks = Bookmarks.query.filter(Bookmarks.user_id == user.id).all()
+    return render_template('users/show.html', user=user, bookmarks=bookmarks)
 
 @app.route('/bookmark-city', methods=['GET', 'POST'])
 @login_required
 def bookmark_city():
     """Adds city to the user's bookmars list."""
 
-    user = User.query.get_or_404(user_id)   
-
     if not user:
-        flash("Access unauthorized. Please login,", 'danger')
+        flash("Access unauthorized. Please login.", 'danger')
         return redirect('/')
 
-    saved_city = City.query.get_or_404(city_id)
-    if saved_city.user_id == user.id:
+    bookmarked_city = City.query.get_or_404(city_id)  
+    if bookmarked_city.user_id == user.id:
         return abort(403)
-    
+
     user_bookmarks = user.bookmarks
 
-    if saved_city in user_bookmarks:
-        user.bookmarks = [bookmark for bookmark in user_bookmarks if bookmark != saved_city]
+    if bookmarked_city in user_bookmarks:
+        user.bookmarks = [bookmark for bookmark in user_bookmarks if bookmark != bookemarked_city]
     else:
-        user.booksmarks.append(saved_city)
+        user.bookmarks.append(bookmarked_city)
 
     db.session.commit()
-    return redirect(f'/users/index')
-
-
-
-
-
-
-
-
-
+    return redirect(f'/users/{user.id}')
 
 
 ##########################################################################
