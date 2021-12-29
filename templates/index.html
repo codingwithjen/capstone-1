@@ -11,7 +11,7 @@
         <div class="col-lg-6 col-md-8 mx-auto mb-5">
         </div>
         <h4 class="fw-light">What's the weather like?</h4><br>
-        <form method="POST" id="weather-form" action="/">
+        <form method="POST" id="weather-form" action="{{ url+for('index') }}">
           {{ form.hidden_tag() }}
 
           {% for field in form if field.widget.input_type != 'hidden' %}
@@ -20,7 +20,7 @@
           {% endfor %}
           {{ field(placeholder=field.label.text, class="form-control") }}
           {% endfor %}
-          <button type="submit" class="btn btn-outline-primary">Submit!</button>
+          <button type="submit" class="btn btn-outline-primary" value="Submit" onclick="getResult();">Submit!</button>
         </form>
       </div>
     </div>
@@ -80,7 +80,8 @@
 
 
 {% block after_scripts %}
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='fetch.js') }}"></script>
 <!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>-->
     <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='js/fetch.js') }}"></script> -->

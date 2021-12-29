@@ -82,7 +82,7 @@ def get_daily_forecast(daily_weather):
 
 # Search City
 
-def get_eather_forecast(res, API_KEY):
+def get_weather_forecast(res, API_KEY):
     LON = res['coord']['lon']
     LAT = res['coord']['lat']
     url = f'{API_BASE_URL}/data/2.5/oncecall?lat={LAT}&lon={LON}&exclude=minutely,hourly&appid={API_KEY}'
