@@ -11,7 +11,7 @@
         <div class="col-lg-6 col-md-8 mx-auto mb-5">
         </div>
         <h4 class="fw-light">What's the weather like?</h4><br>
-        <form method="POST" id="weather-form" action="{{ url+for('index') }}">
+        <form method="POST">
           {{ form.hidden_tag() }}
 
           {% for field in form if field.widget.input_type != 'hidden' %}
