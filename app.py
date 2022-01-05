@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from sqlalchemy.exc import IntegrityError
 from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User, City
-from forms import SignupForm, LoginForm, WeatherForm
+from forms import SignupForm, LoginForm, WeatherForm, BookmarkForm, RemoveBookmarkForm
 from flask import Flask, request, redirect, render_template, url_for, jsonify, flash, session
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 

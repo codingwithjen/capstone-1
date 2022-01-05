@@ -22,3 +22,13 @@ class WeatherForm(FlaskForm):
 
     city = StringField("City", validators=[Optional()])
     zipcode = StringField("Zip Code", validators=[Optional(), Length(min=5, max=15)])
+
+class BookmarkForm(FlaskForm):
+    """Bookmarks/saves city for the existing user into our database."""
+
+    submit = SubmitField('Bookmark')
+
+class RemoveBookmarkForm(FlaskForm):
+    """Removes/unsaves city for the existing user to update our database. """
+
+    submit = SubmitField('Remove')

@@ -26,21 +26,18 @@
     </div>
 
 
-
-<script id="result_template" type="text/html">
+{% raw %}
+<script type="text/html" id="results_template">
     <div class="inner">
-    {{ current }}
+    {{ #current }}
         <h1>{{ city }}</h1>
-        <p>{{ country }}</p>
         <p class="h5">Current Date and Time:  {{ datetime }}</p>
-        <p>{{ timezone }}</p>
-        <p>{{ sun }}</p>
         <i class= "icon wi wi-owm-{{ iconcode }}"></i>
         <p>{{ description }}</p>
         <p class ="h5"> {{ fahrenheit }} ° Fahrenheit</p>
         <p class="h5"> {{ celsius }} ° Celsius</p>
         <p>{{ lastupdate }}</p>
-        {{ saved }}
+        {{ #saved }}
         <!-- Remove Bookmark -->
         <form action="/remove_bookmark" method="POST">
             <input id="city" name="city" type="text" value="{{ city }}" style = "display: None">
@@ -80,12 +77,12 @@
 
 
 {% block after_scripts %}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='fetch.js') }}"></script>
-<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>-->
     <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
-    <script src="{{ url_for('static', filename='js/fetch.js') }}"></script> -->
+
     <!-- Mustache -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.2.0/mustache.min.js"></script>
 {% endblock %}
+
 {% endblock %}

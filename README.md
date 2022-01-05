@@ -7,6 +7,7 @@ Python --version *3.9.6*<br> - you will need Python installed on a local environ
 macOS Monterey *Version 12.0.1*<br>
 PostgreSQL *v13*<br>
 Check the *requirements.txt* file to see the different packages installed and their versions <br>
+Mustache.js used <br>
 
 # Set Up
 
@@ -30,6 +31,10 @@ First, Git Clone the Repo in Command Line (Instructions for Mac Users):
 ### Sources:
 
 1. [user_obj.is_authenticated] (https://www.rithmschool.com/courses/intermediate-flask/authentication-with-flask-login)<br>
-2. [Unique Index] (https://forum.inductiveautomation.com/t/insert-into-database-only-if-the-entry-doesnt-exist/35122/10)
+2. [Unique Index] (https://forum.inductiveautomation.com/t/insert-into-database-only-if-the-entry-doesnt-exist/35122/10)<br>
+3. [mustache.js] (https://www.npmjs.com/package/mustache)
+4. [cdnjs.cloudflare.com] (https://cdnjs.cloudflare.com/)
+5. [Google Hosted Libraries] (https://developers.google.com/speed/libraries)
+
 
 
