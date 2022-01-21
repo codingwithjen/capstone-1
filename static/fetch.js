@@ -4,7 +4,7 @@ $(document).ready(function() {
         e.preventDefault();
         console.log('Clickity Clacked!');
 
-        $a.jax({
+        $.ajax({
             data: {
                 city: $("#city").val(),
             },
@@ -17,7 +17,7 @@ $(document).ready(function() {
                 }
                 else {
                     console.log(data)
-                    var template = $("result_template").html()      
+                    var template = $("#result_template").html()      
                     var html = Mustache.to_html(template, data);
                     $("#result").html(html);
                     $("#flashMessage").hide();

@@ -1,93 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <!-- Required Meta Tags -->
+  <head>
+    <!-- Required Meta Tags -->
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Bootstrap CDN -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://bootswatch.com/4/minty/bootstrap.min.css">
+    <!-- Bootstrap CDN  -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.6.1/cerulean/bootstrap.min.css" integrity="sha512-lojUNdOGZXJLeNdWWK4EcsIw7nnpRdi/KQGxKDNNGToPERJzztZlyQ6E/wUvuoNbc1M0TuBiNVBTLxU29zep9g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- JQuery -->
+    <!-- Import Custom Stylesheets -->
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
+    <!-- <link rel="stylesheet" href="/../static/main.css"> -->
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://kit.fontawesome.com/23ad47a316.js" crossorigin="anonymous"></script>
 
-    {% block before_scripts %}{% endblock %}
+    <title>{% block title %}Weather App{% endblock %}</title>
+    <!-- <link rel="shortcut icon" type="image/png" href="favicon.png"/> -->   
+  </head>
 
-    <!-- Import Custom Stylesheets -->
-    <!-- <link rel="stylesheet" href="/../static/main.css"> -->
 
-    <title>{% block title %}{% endblock %}</title>
-    <link rel="shortcut icon" type="image/png" href="favicon.png"/>
-</head>
+  <!--  -->
 
-<!--  -->
-<!--  -->
 
-<body>
+<body class="d-flex flex-column min-vh-100">
   <!-- Header -->
-    <header class="site-header">
-        <nav class="navbar navbar-expand-md navbar-dark bg-primary fixed-top">
-          <div class="container">
-
-            <!-- Logo -->
-
-            <!-- <a class="navbar-brand" href="#">
-            <img src="/static/imgs/Weather-The-Trip.jpg" alt="" width="30" height="24">
-        </a> -->
-
-            <a class="navbar-brand mr-4" href="/">Weather API Flask App <i class="fas fa-cloud-sun"></i></a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarToggle">
-              <div class="navbar-nav mr-auto">
-               <a class="nav-item nav-link" href="/">&nbsp;&nbsp; Home</i></a>
-              </div>
-
-              <!-- Navbar Right Side -->
-
-              <div class="navbar-nav">
-                  {% if g.user %}
-                    <!-- Show greeting if user is not logged in -->
-
-                    <li class='nav-item'> <a href="/#" class="nav-link text-light"> Hello {{user.username}} <i
-                      class="fas fa-user"></i> </a></li>
-                      <li class='nav-item'> <a href="/dashboard" class='nav-link text-light'>Account</a></li>
-                    <li class='nav-item'> <a href="/logout" class='nav-link text-light'>Logout</a></li>
-                  {% else %}
-                  <li class="nav-item">
-                    <a class="nav-link " href="/login"> <button class='btn btn-info'>Login</button></a>
-                  <a class="nav-link " href="/signup"> <button class='btn btn-info'>Sign Up!</button></a>
-              </li>
-                 {% endif %}
-    </ul>
-</div>
-</div>
-</nav>
-  <!-- Flash Messages -->
-      <main role="main" class="container">
-          <div class="outer">
-              <div class="middle">
-                {% for category, message in get_flashed_messages(with_categories=True) %}
-                <div class="alert my-3 alert-{{ category }}">{{ message }}</div>
-                {% endfor %}
-                {% block content %}{% endblock %}
-              </div>
-          </div>
-      </main>
-      <footer class="footer mt-auto bg-light">
-        <div class="container">
-          <ul class="bd-footer-links list-unstyled">
-            <li class="text-center"><a href="https://github.com/codingwithjen/capstone1">GitHub Repo <i class="fa fa-github"></i></a></li>
-          </ul>
+  <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+        <a class="navbar-brand" href="#">Weather API Flask App <i class="fas fa-cloud-sun"></i></a>
+    <!-- Navbar Left Side -->
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">&nbsp;&nbsp; Home</a>
+          </li>
+        </ul>
+      </div>
+    <!-- Navbar Right Side -->
+      <div class="d-flex justify-content-end">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          {% if current_user.is_authenticated %}
+          <li class="nav-item">
+            <!-- Show greeting if user is logged in -->
+            <a class="nav-link disabled" href="#">Hello {{user.username}} <i class="fas fa-user"></i></a>
+            <a class="btn btn-primary" href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a class="btn btn-primary" href="{{ url_for('logout') }}">Log out</a>
+          {% else %}
+          <a class="btn btn-primary" href="{{ url_for('login') }}">Login</a>
+          <a class="btn btn-primary" href="{{ url_for('logout') }}">Sign up!</a>
+          </li>
+          {% endif %}
         </div>
-      </footer>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash Messages -->
+
+  <main>
+    <div class="container">
+      <div class="outer">
+        {% for category, message in get_flashed_messages(with_categories=True) %}
+          <div class="alert alert dismissible alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% block content %}
+        {% endblock %}
+      </div>
+    </div>
+</main>
+
+
+<!-- Sticky Footer -->
+  <footer class="footer mt-auto bg-light">
+    <div class="container text-center">
+      <ul class="bd-footer-links list-unstyled">
+        <li><a href="https://github.com/codingwithjen/capstone1">GitHub Repo <i class="fa fa-github"></i></a></li>
+      </ul>
+    </div>
+  </footer>
     {% block after_scripts %}
     <!-- Bootstrap Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"

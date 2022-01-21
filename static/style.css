@@ -1,3 +1,5 @@
-#results {
-    display: none;
+legend {
+    width: 70px;
+    padding: 30px;
+    margin-left: calc(50% - 35px - 8px);
 }

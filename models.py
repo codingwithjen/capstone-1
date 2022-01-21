@@ -35,8 +35,8 @@ class User(db.Model, UserMixin):
         return f"<User #{self.id}: {self.username}, {self.email}>"
 
     @classmethod
-    def signup(cls, username, password):
-        """Signup user with hashed password and return user."""
+    def signup(cls, username, email, password):
+        """Sign up user with hashed password and return user."""
 
         hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
 
