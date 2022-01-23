@@ -1,5 +1,6 @@
-legend {
-    width: 70px;
+/* legend {
+    display: inline-block;
     padding: 30px;
+    width: 50px;
     margin-left: calc(50% - 35px - 8px);
-}
+} */

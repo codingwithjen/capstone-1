@@ -183,7 +183,7 @@ def signup():
         try:
             user = User.signup(username=form.username.data,
                     email=form.email.data,
-                    password=hashed_pwd,
+                    password=hashed_pwd,confirm_password=password
                     )
             db.session.add(user)
             db.session.commit()
@@ -195,8 +195,12 @@ def signup():
             flash("Username already taken. Please try again.", 'danger')
             return render_template('signup.html', form=form)
 
+        do_login(user)
+
+        return redirect(url_for('dashboard'))
+
     else:
-        return render_template('login.html', form=form)   
+        return render_template('signup.html', form=form)
 
 
 #############################################################
