@@ -1,6 +1,6 @@
 """Your Weather Flask Application."""
 
-import os, json, string, requests
+import os, json, string, requests, chevron
 
 from datetime import datetime
 from dotenv import load_dotenv
@@ -38,14 +38,16 @@ connect_db(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
-login_manager.login_message_category = 'info'   
+login_manager.session_protection = 'strong'
+login_manager.login_message_category = 'info'
+
 
 # Flask-login will try and load a user BEFORE every request
 
 @login_manager.user_loader
 def load_user(user_id):
     # return User.query.get(int(user_id))
-    return User.get(user_id)
+    return User.query.get(int(user_id))
 
 
 #############################################################
@@ -115,7 +117,7 @@ def index_homepage():
     Not part of JSON API! Weather form to fetch API results."""
 
     form = WeatherForm()
-    return render_template('index.html', form=form)
+    return render_template('index.html', title='Homepage', form=form)
 
 
 # @app.errorhandler(404)
@@ -130,7 +132,7 @@ def index_homepage():
 #############################################################
 
 @app.route('/fetch', methods=['GET', 'POST'])
-def fetch_weather_results():
+def fetch():
     """API endpoint to fetch weather results."""
 
     city = request.form['city']
@@ -247,42 +249,9 @@ def get_dashboard():
     """Render user's dashboard."""
 
     cities = City.query.filter_by(user_id=current_user.id).all()
-    return render_template('dashboard.html', cities=cities, form=form)
+    return render_template('dashboard.html', cities=cities, title='Dashboard', form=form)
 
 
-# @app.route('/users/<int:user_id>', methods=['GET'])
-# @login_required
-# def users_show(user_id):
-#     """Show the logged in user's dashboard.
-#        This is the index page for the user.
-#        This will gather the user's bookmarked cities."""
-
-#     user = User.query.get_or_404(user_id)
-#     bookmarks = Bookmarks.query.filter(Bookmarks.user_id == user.id).all()
-#     return render_template('users/show.html', user=user, bookmarks=bookmarks)
-
-# @app.route('/bookmark_city', methods=['GET', 'POST'])
-# @login_required
-# def bookmark_city():
-#     """Adds city to the user's bookmars list."""
-
-#     if not user:
-#         flash("Access unauthorized. Please login.", 'danger')
-#         return redirect('/login')
-
-#     bookmarked_city = City.query.get_or_404(city_id)  
-#     if bookmarked_city.user_id == user.id:
-#         return abort(403)
-
-#     user_bookmarks = user.bookmarks
-
-#     if bookmarked_city in user_bookmarks:
-#         user.bookmarks = [bookmark for bookmark in user_bookmarks if bookmark != bookemarked_city]
-#     else:
-#         user.bookmarks.append(bookmarked_city)
-
-#     db.session.commit()
-#     return redirect(f'/users/{user.id}')
 
 
 ##########################################################################

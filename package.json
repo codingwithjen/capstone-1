@@ -1,0 +1,24 @@
+{
+  "name": "capstone",
+  "version": "1.0.0",
+  "description": "Versions I am currently using and instructions are based off of this<br>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codingwithjen/capstone-1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/codingwithjen/capstone-1/issues"
+  },
+  "homepage": "https://github.com/codingwithjen/capstone-1#readme",
+  "dependencies": {
+    "axios": "^0.25.0",
+    "mustache": "^4.2.0"
+  }
+}

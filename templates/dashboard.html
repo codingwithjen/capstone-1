@@ -4,4 +4,76 @@
 
 {% block content %}
 
+<div class="row py-5 text-center justify-content-md-center">
+    <div class="col-md-7 col-lg-5">
+        <div class="col-lg-6 col-md-8 mx-auto mb-5" id="inputForm">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <h1 class="display-4">
+                    Weather Data
+                </h1>
+                <div class="form-group">
+                    {{ form.city.label(class="form-control-label") }}
+                    {% if form.city.errors %}
+                    {{ form.city(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.city.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                        {{ form.city(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary btn-block btn-lg") }}
+            </div>
+        </form>
+    </div>
+</div>
+
+{% raw %}
+<script type="text/html" id="result_template">
+    <div class="inner">
+    {{ #current }}
+        <h1>{{ city }}</h1>
+        <p class="h5">Current Date and Time:  {{ datetime }}</p>
+        <i class= "icon wi wi-owm-{{ iconcode }}"></i>
+        <p>{{ description }}</p>
+        <p class ="h5"> {{ fahrenheit }} ° Fahrenheit</p>
+        <p class="h5"> {{ celsius }} ° Celsius</p>
+
+
+    {{ /current }}
+     </div>
+
+    <div class="forecast-container">
+        <div class="row">
+        {{ #forecast }}
+        <div class="col-sm">
+            <i class= "icon wi wi-owm-{{ iconcode }}"></i>
+            <p>{{ description }}</p>
+            <p class ="h5"> {{ fahrenheit }} ° Fahrenheit</p>
+            <p class="h5"> {{ celsius }} ° Celsius</p>
+        </div>
+        {{ /forecast }}
+        </div>
+        </div>
+</script>
+{% endraw %}
+
+
+<div id="result"></div>
+
+{% block scripts %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='fetch.js') }}"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+    <!-- Mustache -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.2.0/mustache.min.js"></script>
+{% endblock scripts %}
 {% endblock %}

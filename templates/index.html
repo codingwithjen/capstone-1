@@ -6,15 +6,15 @@
 
 <div class="row py-5 text-center justify-content-md-center">
     <div class="col-md-7 col-lg-5">
+        <h1 class="nowrap">
+            Weather Search
+        </h1><br>
         <div class="col-lg-6 col-md-8 mx-auto mb-5" id="inputForm">
         <form method="POST" action="">
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4">
-                    Weather Data
-                </legend>
                 <div class="form-group">
-                    {{ form.city.label(class="form-control") }}
+                    <label for="cityLabel" class="cityLabel"><i class="fas fa-search-location"></i> Enter a city :</label>
                     {% if form.city.errors %}
                     {{ form.city(class="form-control form-control-lg is-invalid") }}
                     <div class="invalid-feedback">
@@ -26,17 +26,17 @@
                         {{ form.city(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
+                <div class="form-group">
+                    {{ form.submit(class=" form-control form-control-lg btn btn-primary") }}
+                </div>
                 </div>
             </fieldset>
-            <div class="form-group">
-                {{ form.submit(class="btn btn-primary btn-block btn-lg") }}
-            </div>
         </form>
     </div>
 </div>
 
 {% raw %}
-<script type="text/html" id="result_template">
+<script id="result_template" type="text/html">
     <div class="inner">
     {{ #current }}
         <h1>{{ city }}</h1>
@@ -61,7 +61,7 @@
         </div>
         {{ /forecast }}
         </div>
-        </div>
+    </div>
 </script>
 {% endraw %}
 
@@ -70,12 +70,13 @@
 
 
 {% block scripts %}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <!-- AJAX | Google Hosted Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='fetch.js') }}"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
 
     <!-- Mustache -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.2.0/mustache.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mustache@4.2.0-beta.0/mustache.min.js"></script>
 {% endblock scripts %}
 
 {% endblock %}

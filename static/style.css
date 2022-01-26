@@ -4,3 +4,15 @@
     width: 50px;
     margin-left: calc(50% - 35px - 8px);
 } */
+
+h1 {
+    text-align: center;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.cityLabel {
+    letter-spacing: 1px;
+}
