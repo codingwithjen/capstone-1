@@ -25,7 +25,7 @@ class WeatherForm(FlaskForm):
     """User/Anon-User to submit the city they want data from."""
 
     city = StringField("City", validators=[Optional()],)
-    zipcode = StringField("Zip Code", validators=[Optional()],)
+    zipcode = StringField("Zip Code", validators=[Optional(), Length(min=5)],)
     submit = SubmitField("Submit")
 
 class BookmarkForm(FlaskForm):

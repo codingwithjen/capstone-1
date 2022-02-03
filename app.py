@@ -1,14 +1,14 @@
 """Your Weather Flask Application."""
 
-import os, json, string, requests, chevron
+import os, json, string, requests
 
 from datetime import datetime
 from dotenv import load_dotenv
+from models import db, connect_db, User, City
 from sqlalchemy.exc import IntegrityError
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db, connect_db, User, City
 from forms import SignupForm, LoginForm, WeatherForm, BookmarkForm, RemoveForm
-from flask import Flask, request, redirect, render_template, url_for, jsonify, flash, session
+from flask import Flask, request, redirect, render_template, url_for, jsonify, flash
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 
 API_KEY = os.environ.get('API_SECRET_KEY')
@@ -20,12 +20,13 @@ app = Flask(__name__)
 # if not set there, use development local db.
 app.config['SQLALCHEMY_DATABASE_URI'] = (os.environ.get('DATABASE_URL', 'postgresql:///weather'))
 
-# the toolbar is only enabled in debug mode: set to False to disable
+# the toolbar is only enabled in debug mode: set to False to disable below
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 
+# the toolbar is only enabled in debug mode, uncomment the line below to enable
 # toolbar = DebugToolbarExtension(app)
 
 load_dotenv()
@@ -43,17 +44,16 @@ login_manager.login_message_category = 'info'
 
 
 # Flask-login will try and load a user BEFORE every request
-
 @login_manager.user_loader
 def load_user(user_id):
-    # return User.query.get(int(user_id))
+    """Return User.query.get(int(user_id)."""
+
     return User.query.get(int(user_id))
 
 
 #############################################################
 #####                Helper Decorators                  #####
 #############################################################
-
 # Conversion
 
 def kelvin_to_fahrenheit(K):
@@ -99,7 +99,8 @@ def get_weather_forecast(res, API_KEY):
             'fahrenheit': kelvin_to_fahrenheit(res['main']['feels_like']),
             'celsius': kelvin_to_celsius(res['main']['feels_like']),
             'description': res['weather'][0]['description'],
-            'icon': res['weather'][0]['icon']
+            'icon': res['weather'][0]['icon'],
+            'datetime': timestamp_to_datetime(forecast_res['current']['dt'], forecast_res['timezone_offset'])
         },
         'forecast': get_daily_forecast(forecast_res['daily'])
     }
@@ -136,7 +137,7 @@ def fetch():
     """API endpoint to fetch weather results."""
 
     city = request.form['city']
-    countrycode = 'us'   
+    countrycode = 'us'
     zipcode = ''
 
 
@@ -162,7 +163,7 @@ def fetch():
         user = User.query.filter_by(id=current_user.id).first()
         user_cities = user.cities
         if city.lower() in [c.name.lower() for c in user_cities]:   
-            weather_forecast['bookmarked'] = True   
+            weather_forecast['bookmark'] = True   
 
     return jsonify(weather_forecast)
 
@@ -185,10 +186,9 @@ def signup():
         try:
             user = User.signup(username=form.username.data,
                     email=form.email.data,
-                    password=hashed_pwd,confirm_password=password
-                    )
+                    password=form.password.data,)
             db.session.add(user)
-            db.session.commit()
+            # db.session.commit()
 
             flash(f'Welcome! Account created for {form.username.data}.'
                     f'You are now able to login', 'success')
@@ -197,9 +197,9 @@ def signup():
             flash("Username already taken. Please try again.", 'danger')
             return render_template('signup.html', form=form)
 
-        do_login(user)
+        # do_login(user)
 
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('get_dashboard'))
 
     else:
         return render_template('signup.html', form=form)
@@ -214,7 +214,7 @@ def login():
     """Handle user login."""
 
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('get_dashboard'))
 
     form = LoginForm()
     if form.validate_on_submit():
@@ -251,8 +251,44 @@ def get_dashboard():
     cities = City.query.filter_by(user_id=current_user.id).all()
     return render_template('dashboard.html', cities=cities, title='Dashboard', form=form)
 
+# Bookmark City
 
+@app.route('/bookmark_city', methods=['GET', 'POST'])
+def bookmark_city():
+    """Creates a bookmark for signed in User."""
 
+    if current_user.is_authenticated:
+        # check if city has been bookmarked
+
+        city = request.form.get('city')
+        user = User.query.filter_by(id=current_user.id).first()
+        user_cities = user.cities
+        if city not in [c.name for c in user_cities]:
+            bookmark_city = City(name=city, user_id=user.id)
+            db.session.add(bookmark_city)
+            db.session.commit()
+        flash('City saved to bookmarks!', 'success')
+    else:
+        flash('Please login first.', 'danger')
+    return redirect(url_for('index_homepage'))
+
+@app.route('/remove_city', methods=['GET', 'POST'])
+def remove_city():
+    """Removes bookmarked city."""
+
+    if current_user.id_is_authenticated:
+        # Checks to see if city is bookmarked
+
+        city = request.form.get('city')
+        user = User.query.filter_by(id=current_user.id).first()
+        user_cities = user.cities
+        if city in [c.name for c in user_cities]:
+            City.query.filter_by(name=city, user_id=current_user.id).delete()
+            db.session.commit()
+            flash('City removed', 'danger')
+    else:
+        flash('Please login first.', 'danger')
+    return redirect(url_for('index_homepage'))   
 
 ##########################################################################
 

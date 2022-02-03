@@ -8,31 +8,31 @@ bcrypt = Bcrypt()
 db = SQLAlchemy()
 
 # Create the Bookmarks Model
-class Bookmarks(db.Model):
-    """Mapping user bookmarks to cities searched."""
+# class Bookmarks(db.Model):
+#     """Mapping user bookmarks to cities searched."""
 
-    __tablename__ = 'bookmarks'
+#     __tablename__ = 'bookmarks'
 
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="cascade"))
-    city_id = db.Column(db.Integer, db.ForeignKey('cities.id', ondelete="cascade"))
+#     id = db.Column(db.Integer, primary_key=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="cascade"))
+#     city_id = db.Column(db.Integer, db.ForeignKey('cities.id', ondelete="cascade"))
 
 # Create the User Model
 class User(db.Model, UserMixin):
     """Users in our database."""
 
-    __tablename__ = "users"
+    __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
-    cities = db.relationship('City')
+    cities = db.relationship('City', backref='user', lazy=True)
 
-    bookmarks = db.relationship('City', secondary="bookmarks")
+    # bookmarks = db.relationship('City', secondary="bookmarks")
 
     def __repr__(self):
-        return f"<User #{self.id}: {self.username}, {self.email}>"
+        return f"User('{self.username}', '{self.email}')"
 
     @classmethod
     def signup(cls, username, email, password):
@@ -73,11 +73,11 @@ class User(db.Model, UserMixin):
 class City(db.Model):
     """City Model."""
 
-    __tablename__ = "cities"
+    __tablename__ = 'cities'
+     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), unique=True, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="cascade"), nullable=False)
-    user = db.relationship('User')
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'))
 
 # DO NOT MODIFY
 def connect_db(app):

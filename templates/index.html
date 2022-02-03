@@ -43,10 +43,23 @@
         <p class="h5">Current Date and Time:  {{ datetime }}</p>
         <i class= "icon wi wi-owm-{{ iconcode }}"></i>
         <p>{{ description }}</p>
-        <p class ="h5"> {{ fahrenheit }} ° Fahrenheit</p>
-        <p class="h5"> {{ celsius }} ° Celsius</p>
+        <p class ="h5"> {{ fahrenheit }} °Fahrenheit</p>
+        <p class="h5"> {{ celsius }} °Celsius</p>
 
-
+        <!-- This shows if the city has been bookmarked -->
+        {{ #bookmark }}
+        <form action="/remove_city" method="POST">
+            <input id="city" name="city" type="text" value="{{ city }}" style="display:none">
+            <button type="submit" class="btn btn-outline-info">Remove</button>
+        </form>
+        {{ /bookmark }}
+        <!-- This shows if the city has been bookmarked -->
+        {{ ^bookmark }}
+         <form action="/bookmark_city" method="POST">
+            <input id="city" name="city" type="text" value="{{ city }}" style="display:none">
+            <button type="submit" class="btn btn-outline-info">Save</button>
+        </form>
+        {{ /bookmark }}
     {{ /current }}
      </div>
 
