@@ -72,7 +72,7 @@ def kelvin_to_celsius(K):
 
 def timestamp_to_datetime(ts, timezone_offset=0):
     ts = ts + timezone_offset
-    return datetime.fromtimestamp(ts).strftime("%m/%d %H:%M")
+    return datetime.fromtimestamp(ts).strftime("%B %d, %X %Z")
 
 # 5-Day Forecast
 
@@ -105,7 +105,7 @@ def get_weather_forecast(res, API_KEY):
             'fahrenheit': kelvin_to_fahrenheit(res['main']['feels_like']),
             'celsius': kelvin_to_celsius(res['main']['feels_like']),
             'description': res['weather'][0]['description'],
-            'icon': res['weather'][0]['icon'],
+            'iconcode': res['weather'][0]['id'],
             'datetime': timestamp_to_datetime(forecast_res['current']['dt'], forecast_res['timezone_offset'])
         },
         'forecast': get_daily_forecast(forecast_res['daily'])
