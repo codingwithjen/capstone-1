@@ -30,19 +30,3 @@ $(document).ready(function() {
         });
     });
 });
-
-// $.when(%.ajax({
-//     data: {
-//         city: $("#city").val(),
-//     },
-//     type: "POST",
-//     url: "../static/fetch.js",
-// }))
-// .done(function(template, data){
-//     Mustache.parse(template[0]);
-//     var rendered = Mustache.render(template[0], data[0]);
-//     $(".container").html(rendered);
-// })
-// .fail(function(){
-//     alert("Sorry, there was an error.");
-// });

@@ -1,6 +1,5 @@
 from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired, Email, Optional, Length, EqualTo
-# from wtforms.validators import Required
 from wtforms import StringField, PasswordField, SubmitField
 
 # from models import User?
@@ -38,14 +37,3 @@ class RemoveForm(FlaskForm):
 
     submit = SubmitField("Remove")
 
-
-## User forgot password
-#  https://explore-flask.readthedocs.io/en/latest/users.html
-
-# class EmailForm(FlaskForm):
-#   email = StringField("Email", validators=[Required(), Email()],)
-
-
-# class PasswordForm(FlaskForm):
-#   password = PasswordField("Password", validators=[Required()],)
-#   confirm = PasswordField("Confirm Password", validators=[EqualTo()],)

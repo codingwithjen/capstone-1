@@ -42,10 +42,10 @@
     <!-- Navbar Right Side -->
       <div class="d-flex justify-content-end">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          {% if current_user.is_authenticated %}
+          {% if g.user %}
           <li class="nav-item">
             <!-- Show greeting if user is logged in -->
-            <a class="nav-link disabled" href="#">Hello {{user.username}} <i class="fas fa-user"></i></a>
+            <a class="nav-link disabled" href="#">Hello {{ g.user.username }} <i class="fas fa-user"></i></a>
             <a class="btn btn-primary" href="{{ url_for('get_dashboard') }}">Dashboard</a>
             <a class="btn btn-primary" href="{{ url_for('logout') }}">Log out</a>
           {% else %}

@@ -3,13 +3,14 @@
 import os, json, string, requests
 
 from datetime import datetime
-from dotenv import load_dotenv
-from models import db, connect_db, User, City
+from models import connect_db, db, User, City, Bookmark
 from sqlalchemy.exc import IntegrityError
 from flask_debugtoolbar import DebugToolbarExtension
 from forms import SignupForm, LoginForm, WeatherForm, BookmarkForm, RemoveForm
-from flask import Flask, request, redirect, render_template, url_for, jsonify, flash
-from flask_login import LoginManager, login_user, logout_user, current_user, login_required
+from flask import Flask, request, redirect, render_template, url_for, jsonify, flash, session, g
+
+# Create your own session
+CURR_USER_KEY = "curr_user"
 
 API_KEY = os.environ.get('API_SECRET_KEY')
 API_BASE_URL = "https://api.openweathermap.org/"
@@ -20,7 +21,7 @@ app = Flask(__name__)
 # if not set there, use development local db.
 app.config['SQLALCHEMY_DATABASE_URI'] = (os.environ.get('DATABASE_URL', 'postgresql:///weather'))
 
-# the toolbar is only enabled in debug mode: set to False to disable below
+# the toolbar is only enabled in debug mode: set to True
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -29,27 +30,32 @@ app.config['SQLALCHEMY_ECHO'] = False
 # the toolbar is only enabled in debug mode, uncomment the line below to enable
 # toolbar = DebugToolbarExtension(app)
 
-load_dotenv()
 connect_db(app)
 
 #############################################################
 #####             User Session Management               #####
 #############################################################
 
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
-login_manager.session_protection = 'strong'
-login_manager.login_message_category = 'info'
+@app.before_request
+def add_user_to_g():
+    """If we're logged in, add curr user to Flask global."""
 
+    if CURR_USER_KEY in session:
+        g.user = User.query.get(session[CURR_USER_KEY])
 
-# Flask-login will try and load a user BEFORE every request
-@login_manager.user_loader
-def load_user(user_id):
-    """Return User.query.get(int(user_id)."""
+    else:
+        g.user = None
 
-    return User.query.get(int(user_id))
+def do_login(user):
+    """Log in user."""
 
+    session[CURR_USER_KEY] = user.id
+
+def do_logout():
+    """Logout user."""
+
+    if CURR_USER_KEY in session:
+        del session[CURR_USER_KEY]
 
 #############################################################
 #####                Helper Decorators                  #####
@@ -108,7 +114,7 @@ def get_weather_forecast(res, API_KEY):
 
 
 #############################################################
-#####             Homepage and Error Pages              #####
+#####                     Homepage                     #####
 #############################################################
 
 @app.route('/', methods=['GET', 'POST'])
@@ -118,14 +124,7 @@ def index_homepage():
     Not part of JSON API! Weather form to fetch API results."""
 
     form = WeatherForm()
-    return render_template('index.html', title='Homepage', form=form)
-
-
-# @app.errorhandler(404)
-# def page_not_found(e):
-#     """404 NOT FOUND page."""
-
-#     return render_template('404.html'), 404
+    return render_template('index.html', form=form)
 
 
 #############################################################
@@ -147,23 +146,23 @@ def fetch():
     elif city:
         city = city.lower()
         city = string.capwords(city)
-        url = f'{API_BASE_URL}/data/2.5/weather?q={city}&appid={API_KEY}'
+        url = f'{API_BASE_URL}/data/2.5/weather?q={city},us&appid={API_KEY}'
 
     # OpenWeatherAPI Response
     res = requests.get(url).json()
 
     if res.get('cod') != 200:
-        message = res.get('message', 'Invalid inquiry')
+        message = res.get('message', '')
         return jsonify({'error': message})
 
     else:
         weather_forecast = get_weather_forecast(res, API_KEY)
 
-    if current_user.is_authenticated:
-        user = User.query.filter_by(id=current_user.id).first()
+    if g.user:
+        user = User.query.get(session[CURR_USER_KEY])
         user_cities = user.cities
-        if city.lower() in [c.name.lower() for c in user_cities]:   
-            weather_forecast['bookmark'] = True   
+        if city.lower() in [c.name.lower() for c in user_cities]:
+            weather_forecast['bookmark'] = True
 
     return jsonify(weather_forecast)
 
@@ -178,28 +177,27 @@ def signup():
     """Handle user signup.
     Create new user and add to our database."""
 
-    if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
+    if CURR_USER_KEY in session:
+        del session[CURR_USER_KEY]
 
     form = SignupForm()
+
     if form.validate_on_submit():
         try:
-            user = User.signup(username=form.username.data,
-                    email=form.email.data,
-                    password=form.password.data,)
-            db.session.add(user)
-            # db.session.commit()
-
-            flash(f'Welcome! Account created for {form.username.data}.'
-                    f'You are now able to login', 'success')
+            user = User.signup(
+                username=form.username.data,
+                email=form.email.data,
+                password=form.password.data,
+            )
+            db.session.commit()
 
         except IntegrityError as e:
-            flash("Username already taken. Please try again.", 'danger')
+            flash('Username already taken. Please try again.', 'danger')
             return render_template('signup.html', form=form)
 
-        # do_login(user)
+        do_login(user)
 
-        return redirect(url_for('get_dashboard'))
+        return redirect(url_for('index_homepage'))
 
     else:
         return render_template('signup.html', form=form)
@@ -211,31 +209,29 @@ def signup():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    """Handle user login."""
-
-    if current_user.is_authenticated:
-        return redirect(url_for('get_dashboard'))
+    """Produce login form or handle login."""
 
     form = LoginForm()
+
     if form.validate_on_submit():
+        # authenticate will return a user or False
         user = User.authenticate(form.username.data, form.password.data)
 
         if user:
-            login_user(user)
-            next_page = request.args.get('next')
+            do_login(user)
             flash(f'Hello, {user.username}!', 'success')
-            return redirect(next_page) if next_page else redirect(url_for('dashboard'))
-        else:
-            flash('Login unsuccessful. Please try again.', 'danger')
-    return render_template('login.html', form=form)     
-
+            return redirect('/')
+        flash('Invalid crendentials. Please try again.', 'danger')
+    
+    return render_template('login.html', form=form)
 
 @app.route('/logout')
 def logout():
-    """Handle logout of user."""
+    """Logs user out and redirects to index homepage."""
 
-    logout_user()
-    flash("You have successfully logged out", 'success')
+    do_logout()
+
+    flash('You have successfully logged out.', 'success')
     return redirect(url_for('login'))
 
 
@@ -244,51 +240,72 @@ def logout():
 #############################################################
 
 @app.route('/dashboard')
-@login_required
 def get_dashboard():
-    """Render user's dashboard."""
+    """Show user's dashboard."""
 
-    cities = City.query.filter_by(user_id=current_user.id).all()
-    return render_template('dashboard.html', cities=cities, title='Dashboard', form=form)
+    if not g.user:
+        flash('Access unauthorized. Please login to proceed.', 'danger')
+        return redirect(url_for('index_homepage'))
+
+    # form = WeatherForm()
+
+    user_id = g.user.id
+    user = User.query.get_or_404(user_id)
+
+    if user:
+        cities = City.query.filter_by(user_id=user_id).all()
+    return render_template('dashboard.html', cities=cities, user=user, form=form)
 
 # Bookmark City
 
 @app.route('/bookmark_city', methods=['GET', 'POST'])
 def bookmark_city():
-    """Creates a bookmark for signed in User."""
+    """Creates bookmark for city for logged in user."""
 
-    if current_user.is_authenticated:
-        # check if city has been bookmarked
+    if not g.user:
+        flash('Access unauthorized. Please login to proceed.', 'danger')
+        return redirect(url_for('login'))
 
-        city = request.form.get('city')
-        user = User.query.filter_by(id=current_user.id).first()
-        user_cities = user.cities
+    user_id = g.user.id
+    user = User.query.get_or_404(user_id)
+
+    if user:
+        city = request.form.get['city']
+        user = User.query.filter_by(id=user_id).first()
+        user_cities = user.bookmarks
         if city not in [c.name for c in user_cities]:
-            bookmark_city = City(name=city, user_id=user.id)
-            db.session.add(bookmark_city)
+            bookmarked_city = City(name=city, user_id=user.id)
+            db.session.add(bookmarked_city)
             db.session.commit()
-        flash('City saved to bookmarks!', 'success')
-    else:
-        flash('Please login first.', 'danger')
-    return redirect(url_for('index_homepage'))
+        flash('City has been bookmarked!', 'success')
 
-@app.route('/remove_city', methods=['GET', 'POST'])
-def remove_city():
-    """Removes bookmarked city."""
+    return redirect(url_for('get_dashboard'))
 
-    if current_user.id_is_authenticated:
-        # Checks to see if city is bookmarked
+# Remove Bookmark
 
-        city = request.form.get('city')
-        user = User.query.filter_by(id=current_user.id).first()
-        user_cities = user.cities
+@app.route('/bookmark_remove', methods=['GET', 'POST'])
+def bookmark_remove():
+    """Removes bookmark for city for logged in user."""
+
+    if not g.user:
+        flash('Access unauthorized. Please login to proceed.', 'danger')
+        return redirect(url_for('login'))
+
+    user_id = g.user.id
+    user = User.query.get_or_404(user_id)
+
+    if user:
+        city = request.form.get['city']
+        user = User.query.filter_by(id=user_id).first()
+        user_cities = user.bookmarks
         if city in [c.name for c in user_cities]:
-            City.query.filter_by(name=city, user_id=current_user.id).delete()
+            City.query.filter_by(name=city, user_id=user.id).delete()
             db.session.commit()
-            flash('City removed', 'danger')
-    else:
-        flash('Please login first.', 'danger')
-    return redirect(url_for('index_homepage'))   
+            flash('City has been removed from bookmarks.', 'danger')
+
+    return redirect(url_for('get_dashboard'))
+
+
 
 ##########################################################################
 

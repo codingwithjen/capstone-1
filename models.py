@@ -1,38 +1,30 @@
 """Database models for Weather Flask Application."""
 
+import os
 from flask_bcrypt import Bcrypt
-from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
+
+
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 
-# Create the Bookmarks Model
-# class Bookmarks(db.Model):
-#     """Mapping user bookmarks to cities searched."""
-
-#     __tablename__ = 'bookmarks'
-
-#     id = db.Column(db.Integer, primary_key=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="cascade"))
-#     city_id = db.Column(db.Integer, db.ForeignKey('cities.id', ondelete="cascade"))
-
 # Create the User Model
-class User(db.Model, UserMixin):
+class User(db.Model):
     """Users in our database."""
 
     __tablename__ = 'users'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
-    cities = db.relationship('City', backref='user', lazy=True)
 
-    # bookmarks = db.relationship('City', secondary="bookmarks")
+    bookmarks = db.relationship('City', secondary='bookmarks', backref='cities')
+
 
     def __repr__(self):
-        return f"User('{self.username}', '{self.email}')"
+        return f"<User #{self.id}: {self.username}>"
 
     @classmethod
     def signup(cls, username, email, password):
@@ -46,6 +38,7 @@ class User(db.Model, UserMixin):
             password=hashed_pwd,
         )
 
+        db.session.add(user)
         return user
 
     @classmethod
@@ -63,21 +56,48 @@ class User(db.Model, UserMixin):
         if user:
             is_auth = bcrypt.check_password_hash(user.password, password)
             if is_auth:
+                # return user instance
                 return user
-        
+    
         return False
+        
+    @classmethod
+    def check_username(cls, username) -> bool:
+        """Checks to see if username is present in the DB."""
 
+        return cls.query.filter_by(username=username).one_or_none() if True else False
+
+    def has_bookmark(self, cities):
+        """Finds relevant bookmark for user object by city names.
+        Returns bookmark object if found, else None."""
+
+        return Bookmark.query.filter_by(cities=cities, user_id=self.id).one_or_none()
 
 # Create the City Model
-
 class City(db.Model):
     """City Model."""
 
     __tablename__ = 'cities'
      
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(30), unique=True, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'))
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(30), nullable=False)
+
+
+# Create the Bookmark Model
+
+class Bookmark(db.Model):
+    """Bookmarks Model."""
+
+    __tablename__ = 'bookmarks'
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'), primary_key=True, nullable=False)
+    cities = db.Column(db.Text, db.ForeignKey('cities.name', ondelete='cascade'), primary_key=True, nullable=False)
+
+    def __repr__(self):
+        """Returns string representation of instance."""
+
+        return f"<Bookmark user:{self.user_id} city:{self.city_name}>"
+
 
 # DO NOT MODIFY
 def connect_db(app):
@@ -85,4 +105,3 @@ def connect_db(app):
 
     db.app = app
     db.init_app(app)
-
