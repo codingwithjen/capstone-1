@@ -18,10 +18,6 @@ h1 {
     text-align: center;
 }
 
-.inputForm {
-    text-align: left;
-}
-
 .inner {
     margin: 100px auto;
     width: 35%;
@@ -56,6 +52,34 @@ h1 {
     z-index: -1;
 }
 
+.middle {
+    display: table-cell;
+    vertical-align: middle;
+  }
+
+.row {
+    display: flex;
+    }
+
+.col-sm {
+    border-right: 1px solid;
+    padding:5px;
+}
+
+.col-sm:last-child {
+    border-right: none;
+}
+
+.forecast-container {
+  margin: 10px auto;
+  width: 75%;
+  border: 1px solid ;
+  padding: 5px;
+  background: #e9eaef94;
+  text-align: center;
+  min-width: 350px;
+}
+
 .nowrap {
     white-space: nowrap;
 }
@@ -64,3 +88,7 @@ h1 {
     letter-spacing: 1px;
 }
 
+
+.inputform{
+    text-align: left;
+}

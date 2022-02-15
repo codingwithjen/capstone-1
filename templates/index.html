@@ -32,37 +32,6 @@
     </form>
 </div>
 
-<!-- <div class="row py-5 text-center justify-content-md-center" id="innerTop">
-    <div class="col-md-7 col-lg-5">
-        <h1 class="nowrap">
-            Weather Search
-        </h1><br>
-        <div class="col-lg-6 col-md-8 mx-auto mb-5" id="inputForm">
-        <form method="POST" action="">
-            {{ form.hidden_tag() }}
-            <fieldset class="form-group">
-                <div class="form-group">
-                    <label for="cityLabel" class="cityLabel"><i class="fas fa-search-location"></i> Enter a city :</label>
-                    {% if form.city.errors %}
-                    {{ form.city(class="form-control form-control-lg is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.city.errors %}
-                        <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                    {% else %}
-                        {{ form.city(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.submit(class=" form-control form-control-lg btn btn-primary") }}
-                </div>
-                </div>
-            </fieldset>
-        </form>
-    </div>
-</div> -->
-
 {% raw %}
 <script id="result_template" type="text/html">
     <div class="inner">
@@ -96,9 +65,8 @@
         <div class="row">
         {{ #forecast }}
         <div class="col-sm">
-            <i class= "icon wi wi-owm-{{ iconcode }}"></i>
-            <p>{{ description }}</p>
-            <p class ="h5"> {{ fahrenheit }} ° Fahrenheit</p>
+            <p class="h5">{{ datetime }}</p><br>
+            <p class="h5"> {{ fahrenheit }} ° Fahrenheit</p>
             <p class="h5"> {{ celsius }} ° Celsius</p>
         </div>
         {{ /forecast }}

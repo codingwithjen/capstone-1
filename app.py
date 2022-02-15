@@ -72,7 +72,7 @@ def kelvin_to_celsius(K):
 
 def timestamp_to_datetime(ts, timezone_offset=0):
     ts = ts + timezone_offset
-    return datetime.fromtimestamp(ts).strftime("%B %d, %X %Z")
+    return datetime.fromtimestamp(ts).strftime("%x")
 
 # 5-Day Forecast
 
@@ -254,7 +254,7 @@ def get_dashboard():
 
     if user:
         cities = City.query.filter_by(user_id=user_id).all()
-    return render_template('dashboard.html', cities=cities, user=user, form=form)
+    return render_template('dashboard.html', cities=cities)
 
 # Bookmark City
 
@@ -332,8 +332,4 @@ def add_header(req):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
-
 
