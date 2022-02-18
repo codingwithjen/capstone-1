@@ -4,6 +4,12 @@
 
 {% block content %}
 
+<div class="inner" id="autocomplete">
+    <label for="id_label_single"><i class="fas fa-search-location"></i> Enter a city :
+    <select class="js-single js-states form-control" id="id_lable_single"></select>
+    </label>
+</div>
+
 <div class="inner" id="inputForm">
     <form method="POST" action="">
         {{ form.hidden_tag() }}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+    <div class="inner">
+        <p>{{ g.user.username }}</p>
+        <p>{{ g.user.email }}</p>
+    </div>
+
+    <div class="forecast-container">
+        {% if cities %}
+            <div class="row">
+                {% for city in cities %}
+                <div class="col-sm">
+                    <p>{{ city.name }}</p>
+                </div>
+                {% endfor %}
+            </div>
+                </div>
+        {% else %}
+                <p>No bookmarks</p>
+    </div>
+
+
+{% endblock %}

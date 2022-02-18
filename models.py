@@ -1,5 +1,6 @@
 """Database models for Weather Flask Application."""
 
+from enum import unique
 import os
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
@@ -19,8 +20,8 @@ class User(db.Model):
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
-
-    bookmarks = db.relationship('City', secondary='bookmarks', backref='cities')
+    # cities = db.relationship('City', backref='users')
+    bookmarks = db.relationship('City', secondary='bookmarks')
 
 
     def __repr__(self):
@@ -67,20 +68,22 @@ class User(db.Model):
 
         return cls.query.filter_by(username=username).one_or_none() if True else False
 
-    def has_bookmark(self, cities):
-        """Finds relevant bookmark for user object by city names.
-        Returns bookmark object if found, else None."""
+    # def has_bookmark(self, cities):
+    #     """Finds relevant bookmark for user object by city names.
+    #     Returns bookmark object if found, else None."""
 
-        return Bookmark.query.filter_by(cities=cities, user_id=self.id).one_or_none()
+    #     return Bookmark.query.filter_by(cities=cities, user_id=self.id).one_or_none()
 
 # Create the City Model
 class City(db.Model):
     """City Model."""
 
     __tablename__ = 'cities'
-     
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(30), nullable=False)
+    state_name = db.Column(db.String, nullable=False)
+    # city_name = db.Column(db.Text, nullable=False)
+    # user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 
 # Create the Bookmark Model
@@ -90,13 +93,14 @@ class Bookmark(db.Model):
 
     __tablename__ = 'bookmarks'
 
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'), primary_key=True, nullable=False)
-    cities = db.Column(db.Text, db.ForeignKey('cities.name', ondelete='cascade'), primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'))
+    city_id = db.Column(db.Integer, db.ForeignKey('cities.id', ondelete='cascade'))
 
     def __repr__(self):
         """Returns string representation of instance."""
 
-        return f"<Bookmark user:{self.user_id} city:{self.city_name}>"
+        return f"<Bookmark user:{self.user_id} city:{self.city_id}>"
 
 
 # DO NOT MODIFY
