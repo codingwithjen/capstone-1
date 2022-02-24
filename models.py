@@ -1,6 +1,6 @@
 """Database models for Weather Flask Application."""
 
-from enum import unique
+# from enum import unique
 import os
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
@@ -17,11 +17,12 @@ class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String, unique=True, nullable=False)
-    email = db.Column(db.String, unique=True, nullable=False)
-    password = db.Column(db.String, nullable=False)
-    # cities = db.relationship('City', backref='users')
-    bookmarks = db.relationship('City', secondary='bookmarks')
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+
+    cities = db.relationship('City')
+    bookmarks = db.relationship('Bookmark')
 
 
     def __repr__(self):
@@ -62,11 +63,11 @@ class User(db.Model):
     
         return False
         
-    @classmethod
-    def check_username(cls, username) -> bool:
-        """Checks to see if username is present in the DB."""
+    # @classmethod
+    # def check_username(cls, username) -> bool:
+    #     """Checks to see if username is present in the DB."""
 
-        return cls.query.filter_by(username=username).one_or_none() if True else False
+    #     return cls.query.filter_by(username=username).one_or_none() if True else False
 
     # def has_bookmark(self, cities):
     #     """Finds relevant bookmark for user object by city names.
@@ -81,9 +82,11 @@ class City(db.Model):
     __tablename__ = 'cities'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    state_name = db.Column(db.String, nullable=False)
-    # city_name = db.Column(db.Text, nullable=False)
-    # user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    state_name = db.Column(db.String(100))
+    city_name = db.Column(db.String(100))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'))
+
+    user = db.relationship('User')
 
 
 # Create the Bookmark Model
@@ -93,14 +96,14 @@ class Bookmark(db.Model):
 
     __tablename__ = 'bookmarks'
 
-    id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'))
     city_id = db.Column(db.Integer, db.ForeignKey('cities.id', ondelete='cascade'))
 
-    def __repr__(self):
-        """Returns string representation of instance."""
+    # def __repr__(self):
+    #     """Returns string representation of instance."""
 
-        return f"<Bookmark user:{self.user_id} city:{self.city_id}>"
+    #     return f"<Bookmark user:{self.user_id} city:{self.city_id}>"
 
 
 # DO NOT MODIFY

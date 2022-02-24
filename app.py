@@ -166,26 +166,39 @@ def fetch():
 
     return jsonify(weather_forecast)
 
+
+# Serialization
+def serialize_city(cities):
+    """Serialize a city SQLAlchemy obj to dictionary."""
+
+    return {
+        "id": cities.id,
+        "state": cities.state_name,
+        "city": cities.city_name,
+    }
+
+
 @app.route('/search', methods=['GET'])
 def search_city():
+    """Page with listing of cities.
+
+    Can take a 'q' param in querystring to search by that city."""
+
+    # q = request.args.get('q')
+
+    # if not q:
+    #     cities = City.query.all()
+    # else:
+    #     cities = City.query.filter(City.city_name.like(f"%{q}%")).all()
+    
+    # return jsonify(cities)
 
     q = request.args.get('q')
-    # search = "%{}%".format(q)
-    # cities = City.query.all()
-    
-    cities = [
-    {"state_name": "AZ", "city_name" : "Tempe"},
-    {"state_name": "AZ", "city_name" : "Tempe"},
-    {"state_name": "AZ", "city_name" : "Tempe"},
-    {"state_name": "AZ", "city_name" : "Tempe"},
-    {"state_name": "AZ", "city_name" : "Tempe"},
-    {"state_name": "AZ", "city_name" : "Tempe"},
-    {"state_name": "AZ", "city_name" : "Tempe"},
-    {"state_name": "AZ", "city_name" : "Tempe"},
-    {"state_name": "AZ", "city_name" : "Tempe"},
-    ]
+    search = '%{}%'.format(q)
+    cities = City.query.all()
+    serialized = [serialize_city(c) for c in cities]
 
-    return jsonify(cities)
+    return jsonify(cities=serialized)
 
 
 #############################################################
