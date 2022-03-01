@@ -3,11 +3,11 @@
 import os, json, string, requests
 
 from datetime import datetime
-from models import connect_db, db, User, City, Bookmark
-from sqlalchemy.exc import IntegrityError
-from flask_debugtoolbar import DebugToolbarExtension
 from forms import SignupForm, LoginForm, WeatherForm
+from models import connect_db, db, User, City, Bookmark
+from flask_debugtoolbar import DebugToolbarExtension
 from flask import Flask, request, redirect, render_template, url_for, jsonify, flash, session, g
+from sqlalchemy.exc import IntegrityError
 
 # Create your own session
 CURR_USER_KEY = "curr_user"
