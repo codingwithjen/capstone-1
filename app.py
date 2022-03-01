@@ -168,6 +168,7 @@ def fetch():
 
 
 # Serialization
+
 def serialize_city(cities):
     """Serialize a city SQLAlchemy obj to dictionary."""
 
@@ -177,6 +178,7 @@ def serialize_city(cities):
         "city": cities.city_name,
     }
 
+# Search City
 
 @app.route('/search', methods=['GET'])
 def search_city():
@@ -193,12 +195,21 @@ def search_city():
     
     # return jsonify(cities)
 
-    q = request.args.get('q')
-    search = '%{}%'.format(q)
-    cities = City.query.all()
-    serialized = [serialize_city(c) for c in cities]
+    # q = request.args.get('q')
+    # search = '%{}%'.format(q)
+    # cities = City.query.all()
+    # serialized = [serialize_city(c) for c in cities]
 
-    return jsonify(cities=serialized)
+    # return jsonify(cities=serialized)
+
+    search = request.args.get('q')
+
+    if not search:
+        cities = City.query.all()
+    else:
+        cities = City.query.filter(City.city_name.like(f"%{search}%")).all()
+
+    return render_template('index.html', cities=cities)
 
 
 #############################################################
