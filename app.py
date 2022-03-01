@@ -186,30 +186,14 @@ def search_city():
 
     Can take a 'q' param in querystring to search by that city."""
 
-    # q = request.args.get('q')
-
-    # if not q:
-    #     cities = City.query.all()
-    # else:
-    #     cities = City.query.filter(City.city_name.like(f"%{q}%")).all()
-    
-    # return jsonify(cities)
-
-    # q = request.args.get('q')
-    # search = '%{}%'.format(q)
-    # cities = City.query.all()
-    # serialized = [serialize_city(c) for c in cities]
-
-    # return jsonify(cities=serialized)
-
-    search = request.args.get('q')
+    search = request.arts.get('q')
 
     if not search:
         cities = City.query.all()
     else:
-        cities = City.query.filter(City.city_name.like(f"%{search}%")).all()
+        users = User.query.filter(User.username.like(f"%{search}%")).all()
 
-    return render_template('index.html', cities=cities)
+    return render_template('users/index.html', cities=cities)
 
 
 #############################################################
