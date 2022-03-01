@@ -1,3 +1,4 @@
+alembic==1.7.6
 bcrypt==3.2.0
 blinker==1.4
 certifi==2021.10.8
@@ -11,6 +12,7 @@ Flask==2.0.2
 Flask-Bcrypt==0.7.1
 Flask-DebugToolbar==0.11.0
 Flask-Login==0.5.0
+Flask-Migrate==3.1.0
 Flask-SQLAlchemy==2.5.1
 Flask-WTF==1.0.0
 greenlet==1.1.2
@@ -18,6 +20,7 @@ gunicorn==20.1.0
 idna==3.3
 itsdangerous==2.0.1
 Jinja2==3.0.3
+Mako==1.1.6
 MarkupSafe==2.0.1
 psycopg2-binary==2.9.2
 pycparser==2.21
