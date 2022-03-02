@@ -23,13 +23,12 @@ class LoginForm(FlaskForm):
 class WeatherForm(FlaskForm):
     """User/Anon-User to submit the city they want data from."""
 
-    city = StringField("City", validators=[Optional()],)
-    zipcode = StringField("Zip Code", validators=[Optional(), Length(min=5)],)
+    city = StringField("City", validators=[DataRequired()],)
     submit = SubmitField("Submit")
 
-class SearchForm(FlaskForm):
-    """User/Anon-User to submit the city they want data from."""
+# class SearchForm(FlaskForm):
+#     """User/Anon-User to submit the city they want data from."""
 
-    city = StringField("City", validators=[Optional()],)
-    submit = SubmitField("Submit")
+#     city = StringField("City", validators=[Optional()],)
+#     submit = SubmitField("Submit")
 

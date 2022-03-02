@@ -1,11 +1,8 @@
 """Database models for Weather Flask Application."""
 
-# from enum import unique
 import os
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
-
-
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
@@ -87,6 +84,9 @@ class City(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'))
 
     user = db.relationship('User')
+
+    def as_dict(self):
+        return {'city_name': self.city_name}
 
 
 # Create the Bookmark Model

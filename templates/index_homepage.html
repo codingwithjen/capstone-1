@@ -4,6 +4,44 @@
 
 {% block content %}
 
+
+<div class="inner" id="inputForm">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <h1 class="nowrap">
+                Weather Autocomplete
+            </h1>
+        <div class="form-group">
+            <label for="cityLabel" class="cityLabel"><i class="fas fa-search-location"></i> Enter a city :</label>
+            {% if form.city.errors %}
+            {{ form.city(class="form-control form-control-lg is-invalid") }}
+        </div>
+        <div class="invalid-feedback">
+            {% for error in form.city.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+        </div>
+        {% else %}
+            {{ form.city(class="form-control form-control-lg") }}
+        {% endif %}
+        </div>
+        <div class="form-group">
+        {{ form.submit(class=" form-control form-control-lg btn btn-primary") }}
+        </div>
+        </fieldset>
+    </form>
+</div>
+<!-- <form class="form-inline">
+ <div class="form-group">
+     {{form.city(class="form-control")}}
+   </div>
+   <button type="submit" class="btn btn-info">Submit</button>
+</form> -->
+<div id="auto_results"></div>
+
+<!--  -->
+
 <div class="inner" id="inputForm">
     <form method="POST" action="">
         {{ form.hidden_tag() }}

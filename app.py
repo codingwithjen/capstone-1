@@ -124,7 +124,7 @@ def index_homepage():
     Renders HTML template that includes some JS.
     Not part of JSON API! Weather form to fetch API results."""
 
-    form = WeatherForm()
+    form = WeatherForm(request.form)
     return render_template('index_homepage.html', form=form)
 
 
@@ -163,17 +163,49 @@ def fetch():
     return jsonify(weather_forecast)
 
 
-
-# Serialization
-
-# def serialize_city(cities):
+#############################################################
+#####             FLASK AJAX AUTOCOMPLETE               #####
+#############################################################
+# def serialized_city(city):
 #     """Serialize a city SQLAlchemy obj to dictionary."""
 
 #     return {
-#         "id": cities.id,
-#         "state": cities.state_name,
-#         "city": cities.city_name,
+#         'city': cities.city_name,
 #     }
+
+# ###
+
+# @app.route('/cities')
+# def list_all_cities():
+#     """Return JSON {'cities': [{city name}]}."""
+
+#     cities = City.query.all()
+#     serialized = [serialized_city(c) for c in cities]
+
+#     return jsonify(cities=serialized)
+#     # end list_all_cities
+
+# @app.route('/autocomplete', methods=['GET'])
+# def autocomplete():
+#     """Autocomplete on search bar showing all US cities."""
+
+#     search = request.args.get('q')
+#     query = db_session.query
+
+@app.route('/cities')
+def citydic():
+    """."""
+    res = City.query.all()
+    list_cities = [r.as_dict() for r in res]
+    return jsonify(list_cities)
+
+@app.route('/process', methods=['POST'])
+def process():
+    city = request.form['city']
+    if city:
+        return jsonify({'city':city})
+    return jsonify({'error': 'missing data..'})
+
 
 # Search City
 
