@@ -1,10 +1,11 @@
 """Your Weather Flask Application."""
 
+# from msilib import Table
 import os, json, string, requests
 
 from datetime import datetime
+from models import connect_db, db, User, City
 from forms import SignupForm, LoginForm, WeatherForm
-from models import connect_db, db, User, City, Bookmark
 from flask_debugtoolbar import DebugToolbarExtension
 from flask import Flask, request, redirect, render_template, url_for, jsonify, flash, session, g
 from sqlalchemy.exc import IntegrityError
@@ -124,25 +125,21 @@ def index_homepage():
     Not part of JSON API! Weather form to fetch API results."""
 
     form = WeatherForm()
-    return render_template('index.html', form=form)
+    return render_template('index_homepage.html', form=form)
 
 
 #############################################################
 #####              RESTFUL CITIES JSON API              #####
 #############################################################
-
 @app.route('/fetch', methods=['GET', 'POST'])
 def fetch():
     """API endpoint to fetch weather results."""
-
     city = request.form['city']
     countrycode = 'us'
     zipcode = ''
 
-
     if not city and not zipcode:
         return jsonify({'error': 'Please enter in at least one field.'})
-
     elif city:
         city = city.lower()
         city = string.capwords(city)
@@ -152,7 +149,6 @@ def fetch():
     res = requests.get(url).json()
 
     if res.get('cod') != 200:
-        message = res.get('message', '')
         return jsonify({'error': message})
 
     else:
@@ -167,33 +163,37 @@ def fetch():
     return jsonify(weather_forecast)
 
 
+
 # Serialization
 
-def serialize_city(cities):
-    """Serialize a city SQLAlchemy obj to dictionary."""
+# def serialize_city(cities):
+#     """Serialize a city SQLAlchemy obj to dictionary."""
 
-    return {
-        "id": cities.id,
-        "state": cities.state_name,
-        "city": cities.city_name,
-    }
+#     return {
+#         "id": cities.id,
+#         "state": cities.state_name,
+#         "city": cities.city_name,
+#     }
 
 # Search City
 
-@app.route('/search', methods=['GET'])
-def search_city():
-    """Page with listing of cities.
+# @app.route('/search', methods=['GET'])
+# def search_city():
+#     """Autocomplete search.
 
-    Can take a 'q' param in querystring to search by that city."""
+#     Can take a 'q' param in querystring to search by that city."""
 
-    search = request.arts.get('q')
+#     results = []
+#     search = request.args.get('q')
+#     results.append(db.session.query(City).filter(City.like('%' + search + '%')).all())
+#     return dumps(results)
 
-    if not search:
-        cities = City.query.all()
-    else:
-        users = User.query.filter(User.username.like(f"%{search}%")).all()
+    # if not search:
+    #     cities = City.query.all()
+    # else:
+    #     cities = City.query.filter(City.city_name.like(f"%{search}%")).all()
 
-    return render_template('users/index.html', cities=cities)
+    # return render_template('users/index.html', cities=cities)
 
 
 #############################################################

@@ -1,15 +1,9 @@
 $(document).ready(function() {
-        $('#id_label_single').select2({
-            placeholder: 'Search a city'
-            });
-
     $("form").on('submit', function(e) {
-
         
         e.preventDefault();
-        // test to see if it pulls through on dev tools
+        // test to see if it pulls throw on dev tools
         console.log('Clickity Clacked!');
-
         $.ajax({
             data: {
                 city: $("#city").val(),
@@ -17,7 +11,6 @@ $(document).ready(function() {
             type: 'POST',
             url: '/fetch',
             success: function(data) {
-
                 if (data.error) {
                     alert(data.error);
                 }
@@ -33,17 +26,3 @@ $(document).ready(function() {
         });
     });
 });
-
-// $(document).ready(function() {
-//     $("form".on('submit', function(e) {
-
-//         e.preventDefault();
-//         // test to see if it pulls through on dev tools
-//         console.log('Clickity Clacked!');
-
-//         // $('.js-example-basic-single').select2({
-//             // placeholder: 'Search a city'
-//             // });
-
-//     }));
-// });

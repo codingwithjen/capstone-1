@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms.validators import DataRequired, Email, Optional, Length, EqualTo
+from wtforms.validators import DataRequired, Optional, Email, Length, EqualTo
 from wtforms import StringField, PasswordField, SubmitField
 
 # from models import User?
@@ -27,13 +27,9 @@ class WeatherForm(FlaskForm):
     zipcode = StringField("Zip Code", validators=[Optional(), Length(min=5)],)
     submit = SubmitField("Submit")
 
-# class BookmarkForm(FlaskForm):
-#     """Bookmarks/saves city for the existing user into our database."""
+class SearchForm(FlaskForm):
+    """User/Anon-User to submit the city they want data from."""
 
-#     submit = SubmitField("Bookmark")
-
-# class RemoveForm(FlaskForm):
-#     """Removes/unsaves city for the existing user to update our database. """
-
-#     submit = SubmitField("Remove")
+    city = StringField("City", validators=[Optional()],)
+    submit = SubmitField("Submit")
 
