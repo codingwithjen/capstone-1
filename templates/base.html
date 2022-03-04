@@ -2,54 +2,116 @@
 <html lang="en">
   <head>
     <!-- Required Meta Tags -->
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Bootstrap CDN  -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.1.3/quartz/bootstrap.min.css" integrity="sha512-k7BnoxK4uQKh1/VO7v9sOE/Kw7S6q4KnhDN/HpVqDXAaqUgBoD4Sir7ba/mcVGmT0p6MRi7KPGDaN53tPACnww==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.1.3/quartz/bootstrap.min.css"
+      integrity="sha512-k7BnoxK4uQKh1/VO7v9sOE/Kw7S6q4KnhDN/HpVqDXAaqUgBoD4Sir7ba/mcVGmT0p6MRi7KPGDaN53tPACnww=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
 
     <!-- Import Custom Stylesheets -->
-    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
-    <link rel="stylesheet" href="../static/css/weather-icons.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+    <link rel="stylesheet" href="../static/css/weather-icons.min.css" />
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://kit.fontawesome.com/23ad47a316.js" crossorigin="anonymous"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <script
+      src="https://kit.fontawesome.com/23ad47a316.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Urbanist&display=swap"
+      rel="stylesheet"
+    />
 
     <title>{% block title %}Weather App{% endblock %}</title>
-    <!-- <link rel="shortcut icon" type="image/png" href="favicon.png"/> -->   
+    <!-- <link rel="shortcut icon" type="image/png" href="favicon.png"/> -->
   </head>
 
+  <body>
+    <!-- Header -->
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('index_homepage') }}"
+          >Weather Flask Search <i class="fas fa-cloud-sun"></i
+        ></a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarColor01"
+          aria-controls="navbarColor01"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
+        <div class="collapse navbar-collapse" id="navbarColor01">
+          <ul class="navbar-nav me-auto">
+            <li>&nbsp;&nbsp;</li>
+            <li class="nav-item">
+              <a class="nav-link active" href="{{ url_for('index_homepage') }}"
+                >Home
+                <span class="visually-hidden">(current)</span>
+              </a>
+            </li>
+            <li>&nbsp;&nbsp;</li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="https://github.com/codingwithjen/capstone1"
+                target="_blank"
+                >Code <i class="fa fa-github"></i
+              ></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
 
-<body class="d-flex flex-column min-vh-100">
-  <!-- Header -->
-  <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
+    <!-- <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-      <a class="navbar-brand" href="{{ url_for('index_homepage') }}">Weather API Flask App <i class="fas fa-cloud-sun"></i></a>
-      <ul class="navbar-nav me-auto">
+      <a class="navbar-brand" href="{{ url_for('index_homepage') }}">Weather Flask Search <i class="fas fa-cloud-sun"></i></a>
+
+      <ul class="navbar-nav m-auto">
         <li class="nav-item active">
           <a class="nav-link" href="{{ url_for('index_homepage') }}">&nbsp;&nbsp; Home</a>
         </li>
-      </ul>
-      <!-- <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+        <li class="nav-item active">
+          <a class="nav-link" href="https://github.com/codingwithjen/capstone1" target="_blank">GitHub Repo <i class="fa fa-github"></i></a>
+        </li>
+      </ul> -->
+    <!-- <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button> -->
-      <div class="navbar-collapse collapse" id="navbarColor01">
+    <!-- <div class="navbar-collapse collapse" id="navbarColor01"> -->
     <!-- Navbar Left Side -->
 
-      </div>
+    <!-- </div> -->
     <!-- Navbar Right Side -->
-      <div class="d-flex justify-content-end">
+    <!-- <div class="d-flex justify-content-end">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          {% if g.user %}
-          <li class="nav-item">
-            <!-- Show greeting if user is logged in -->
-            <a class="nav-link disabled" href="#">Hello {{ g.user.username }} <i class="fas fa-user"></i></a>
+          {% if g.user %} -->
+    <!-- <li class="nav-item"> -->
+    <!-- Show greeting if user is logged in -->
+    <!-- <a class="nav-link disabled" href="#">Hello {{ g.user.username }} <i class="fas fa-user"></i></a>
             <a class="btn btn-primary" href="{{ url_for('get_dashboard') }}">Dashboard</a>
-            <a class="btn btn-primary" href="{{ url_for('logout') }}">Log out</a>
-          {% else %}
+            <a class="btn btn-primary" href="{{ url_for('logout') }}">Log out</a> -->
+    <!-- {% else %}
           <a class="btn btn-primary" href="{{ url_for('login') }}">Login</a>
           <a class="btn btn-primary" href="{{ url_for('signup') }}">Sign up!</a>
           </li>
@@ -58,36 +120,33 @@
         </ul>
       </div>
     </div>
-  </nav>
+  </nav> -->
 
-  <!-- Flash Messages -->
+    <!-- Flash Messages -->
 
-  <main>
-    <div class="container">
-      <div class="outer">
-        {% for category, message in get_flashed_messages(with_categories=True) %}
-          <div class="alert alert dismissible alert-{{ category }}" id="flashMessage">{{ message }}</div>
-        {% endfor %}
-        {% block content %}
-        {% endblock %}
+    <main>
+      <div class="container">
+        <div class="outer">
+          {% for category, message in get_flashed_messages(with_categories=True)
+          %}
+          <div
+            class="alert alert dismissible alert-{{ category }}"
+            id="flashMessage"
+          >
+            {{ message }}
+          </div>
+          {% endfor %} {% block content %} {% endblock %}
+        </div>
       </div>
-    </div>
-</main>
+    </main>
 
-
-<!-- Sticky Footer -->
-  <footer class="footer mt-auto bg-light">
-    <div class="container text-center">
-      <ul class="bd-footer-links list-unstyled">
-        <li><a href="https://github.com/codingwithjen/capstone1" target="_blank">GitHub Repo <i class="fa fa-github"></i></a></li>
-      </ul>
-    </div>
-  </footer>
     {% block after_scripts %}
     <!-- Bootstrap Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
-    crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+      crossorigin="anonymous"
+    ></script>
     {% endblock %}
-</body>
+  </body>
 </html>

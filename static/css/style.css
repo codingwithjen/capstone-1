@@ -11,7 +11,8 @@ html {
 }
 
 body {
-    background-color: transparent;
+    /* background-color: transparent; */
+    font-family: 'Urbanist', sans-serif;
 }
 
 h1 {
@@ -37,7 +38,7 @@ h1 {
     width: 100%;
 }
 
-.outer::before {
+/* .outer::before {
     background: url('../jpg/bg.jpeg');
     background-repeat: no-repeat;
     background-attachment: scroll;
@@ -50,7 +51,7 @@ h1 {
     right: 0;
     opacity: 0.6;
     z-index: -1;
-}
+} */
 
 .middle {
     display: table-cell;
@@ -110,3 +111,6 @@ h1 {
 /* .btn {
     padding: .375rem .75rem; margin-top:10px;
 } */
+
+
+/* font-family: 'Urbanist', sans-serif; */
