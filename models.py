@@ -83,7 +83,7 @@ class City(db.Model):
     city_name = db.Column(db.String(100))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'))
 
-    user = db.relationship('User')
+    # user = db.relationship('User')
 
     def as_dict(self):
         return {'city_name': self.city_name}

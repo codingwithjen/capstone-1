@@ -124,7 +124,7 @@ def index_homepage():
     Renders HTML template that includes some JS.
     Not part of JSON API! Weather form to fetch API results."""
 
-    form = WeatherForm(request.form)
+    form = WeatherForm()
     return render_template('index_homepage.html', form=form)
 
 
@@ -149,6 +149,7 @@ def fetch():
     res = requests.get(url).json()
 
     if res.get('cod') != 200:
+        message = res.get('message', '')
         return jsonify({'error': message})
 
     else:
@@ -164,7 +165,7 @@ def fetch():
 
 
 #############################################################
-#####             FLASK AJAX AUTOCOMPLETE               #####
+#####                FLASK AJAX SELECT2                 #####
 #############################################################
 # def serialized_city(city):
 #     """Serialize a city SQLAlchemy obj to dictionary."""
@@ -177,7 +178,7 @@ def fetch():
 
 # @app.route('/cities')
 # def list_all_cities():
-#     """Return JSON {'cities': [{city name}]}."""
+#     """Return JSON {'cities': [{city_name}]}."""
 
 #     cities = City.query.all()
 #     serialized = [serialized_city(c) for c in cities]
@@ -185,17 +186,33 @@ def fetch():
 #     return jsonify(cities=serialized)
 #     # end list_all_cities
 
+# @app.route('/search', methods=['GET'])
+# def search_city():
+#     """SELECT2 autocomplete on search bar showing all US cities in our cities DB."""
+
+#     q = request.args.get('q')
+#     search = '%{}%'.format(q)
+#     cities = City.query.all()
+#     serialized = [serialized_city(c) for c in cities]
+
+#     return jsonify(cities=serialized)
+
 # @app.route('/autocomplete', methods=['GET'])
 # def autocomplete():
 #     """Autocomplete on search bar showing all US cities."""
 
 #     search = request.args.get('q')
-#     query = db_session.query
+#     query = db.session.query(City.city_name).filter(City.city_name.like('%' + str(search) + '%'))
+#     results = [c[0] for c in query.all()]
+#     return jsonify(matching_results=results)
 
 @app.route('/cities')
 def citydic():
     """."""
-    res = City.query.all()
+    res = (City
+        .query
+        .limit(10)
+        .all())
     list_cities = [r.as_dict() for r in res]
     return jsonify(list_cities)
 
@@ -205,27 +222,6 @@ def process():
     if city:
         return jsonify({'city':city})
     return jsonify({'error': 'missing data..'})
-
-
-# Search City
-
-# @app.route('/search', methods=['GET'])
-# def search_city():
-#     """Autocomplete search.
-
-#     Can take a 'q' param in querystring to search by that city."""
-
-#     results = []
-#     search = request.args.get('q')
-#     results.append(db.session.query(City).filter(City.like('%' + search + '%')).all())
-#     return dumps(results)
-
-    # if not search:
-    #     cities = City.query.all()
-    # else:
-    #     cities = City.query.filter(City.city_name.like(f"%{search}%")).all()
-
-    # return render_template('users/index.html', cities=cities)
 
 
 #############################################################

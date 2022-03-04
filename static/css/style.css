@@ -92,3 +92,21 @@ h1 {
 .inputform{
     text-align: left;
 }
+
+.form-control {
+    display: block;
+    width:300px;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+/* .btn {
+    padding: .375rem .75rem; margin-top:10px;
+} */
