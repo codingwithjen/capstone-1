@@ -23,6 +23,6 @@ class LoginForm(FlaskForm):
 class WeatherForm(FlaskForm):
     """User/Anon-User to submit the city they want data from."""
 
-    city = StringField("City", validators=[DataRequired()], render_kw={"placeholder": "city"})
+    city = StringField("City", validators=[DataRequired()],)
     submit = SubmitField("Submit")
 

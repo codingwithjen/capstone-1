@@ -197,31 +197,33 @@ def fetch():
 
 #     return jsonify(cities=serialized)
 
-# @app.route('/autocomplete', methods=['GET'])
-# def autocomplete():
-#     """Autocomplete on search bar showing all US cities."""
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    """Autocomplete on search bar showing all US cities."""
 
-#     search = request.args.get('q')
-#     query = db.session.query(City.city_name).filter(City.city_name.like('%' + str(search) + '%'))
-#     results = [c[0] for c in query.all()]
-#     return jsonify(matching_results=results)
+    search = request.args.get('q')
+    query = db_session.query(City.city_name).filter(City.city_name.like('%' + str(search) + '%'))
+    results = [cv[0] for cv in query.all()]
+    return jsonify(matching_results=results)
 
-@app.route('/cities')
-def citydic():
-    """."""
-    res = (City
-        .query
-        .limit(10)
-        .all())
-    list_cities = [r.as_dict() for r in res]
-    return jsonify(list_cities)
+# @app.route('/cities')
+# def citydict():
+#     """."""
+#     res = (City
+#         .query
+#         .limit(10)
+#         .all())
+#     list_cities = [r.as_dict() for r in res]
+#     return jsonify(list_cities)
 
-@app.route('/process', methods=['POST'])
-def process():
-    city = request.form['city']
-    if city:
-        return jsonify({'city':city})
-    return jsonify({'error': 'missing data..'})
+# @app.route('/process', methods=['POST'])
+# def process():
+#     """."""
+
+#     city = request.form['city']
+#     if city:
+#         return jsonify({'city': city})
+#     return jsonify({'error': 'Data missing...'})
 
 
 #############################################################
