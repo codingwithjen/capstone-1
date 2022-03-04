@@ -4,104 +4,7 @@
 
 {% block content %}
 
-
 <div class="inner" id="inputForm">
-    <form method="POST" action="">
-        {{ form.hidden_tag() }}
-        <fieldset class="form-group">
-            <h1 class="nowrap">
-                Weather Autocomplete
-            </h1>
-        <div class="form-group">
-            <label for="cityLabel" class="cityLabel"><i class="fas fa-search-location"></i> Enter a city :</label>
-            {% if form.city.errors %}
-            {{ form.city(class="form-control form-control-lg is-invalid") }}
-        </div>
-        <div class="invalid-feedback">
-            {% for error in form.city.errors %}
-            <span>{{ error }}</span>
-            {% endfor %}
-        </div>
-        {% else %}
-            {{ form.city(class="form-control form-control-lg") }}
-        {% endif %}
-        </div>
-        <div class="ui-widget">
-        {{ form.submit(class="form-control form-control-lg btn btn-primary") }}
-        </div>
-        </fieldset>
-    </form>
-</div>
-<div id="result" class="ui-widget"></div>
-
-<!-- AJAX -->
-
-<script type="text/javascript">
-    $(function() {
-        function log( message ) {
-            $( "<div>") .text( message ).prependTo("#result");
-            $( "#result" ).scrollTop( 0 );
-        }
-        $("#city").autocomplete({
-            source:function(request, response) {
-                $.getJSON("{{url_for('autocomplete')}}",{
-                    q: request.term, // in flask, "q" will be the argument to look for using request.args
-                }, function(data) {
-                    response(data.matching_results); // matching_results from jsonify
-                });
-            },
-            minLength: 10,
-            select: function(event, ui) {
-                console.log(ui.item.value); // not in your question, but might help later
-            }
-        });
-    });
-    </script>
-    
-
-<!-- <script>
-    $(document).ready(function(){
-     var cities=[];
-    
-     function loadCities(){
-      $.getJSON('/cities', function(){
-       for (var i = 0; i < data.length; i++ ) {
-        cities.push(data[i].city_name);
-       }
-     });
-     }
-     loadCities();
-    
-     $('#city').autocomplete({
-      source: cities,
-     }); 
-    
-     $('#city').keyup(function(e)){
-      $.ajax({
-       data: {
-        city:$('#city').val()
-       },
-       type: 'POST',
-       url : '/process',
-       minLength: 2,
-       delay: 10,
-      });
-      .done(function(data){
-       if (data.error){
-        $('#result').text(data.error).show();
-       }
-       else {
-        $('#result').html(data.city).show()
-       }
-      });
-      e.preventDefault;
-     });
-
-    </script> -->
-
-<!--  -->
-
-<!-- <div class="inner" id="inputForm">
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
@@ -127,7 +30,7 @@
         </div>
         </fieldset>
     </form>
-</div> -->
+</div>
 
 {% raw %}
 <script id="result_template" type="text/html">

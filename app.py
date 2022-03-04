@@ -16,6 +16,7 @@ CURR_USER_KEY = "curr_user"
 API_KEY = os.environ.get('API_SECRET_KEY')
 API_BASE_URL = "https://api.openweathermap.org/"
 
+
 app = Flask(__name__)
 
 # Get DB_URI from environ variable (useful for production/testing) or,
@@ -135,11 +136,10 @@ def index_homepage():
 def fetch():
     """API endpoint to fetch weather results."""
     city = request.form['city']
-    countrycode = 'us'
     zipcode = ''
 
     if not city and not zipcode:
-        return jsonify({'error': 'Please enter in at least one field.'})
+        return jsonify({'error': 'Invalid or missing data'})
     elif city:
         city = city.lower()
         city = string.capwords(city)
@@ -162,68 +162,6 @@ def fetch():
             weather_forecast['bookmark'] = True
 
     return jsonify(weather_forecast)
-
-
-#############################################################
-#####                FLASK AJAX SELECT2                 #####
-#############################################################
-# def serialized_city(city):
-#     """Serialize a city SQLAlchemy obj to dictionary."""
-
-#     return {
-#         'city': cities.city_name,
-#     }
-
-# ###
-
-# @app.route('/cities')
-# def list_all_cities():
-#     """Return JSON {'cities': [{city_name}]}."""
-
-#     cities = City.query.all()
-#     serialized = [serialized_city(c) for c in cities]
-
-#     return jsonify(cities=serialized)
-#     # end list_all_cities
-
-# @app.route('/search', methods=['GET'])
-# def search_city():
-#     """SELECT2 autocomplete on search bar showing all US cities in our cities DB."""
-
-#     q = request.args.get('q')
-#     search = '%{}%'.format(q)
-#     cities = City.query.all()
-#     serialized = [serialized_city(c) for c in cities]
-
-#     return jsonify(cities=serialized)
-
-@app.route('/autocomplete', methods=['GET'])
-def autocomplete():
-    """Autocomplete on search bar showing all US cities."""
-
-    search = request.args.get('q')
-    query = db_session.query(City.city_name).filter(City.city_name.like('%' + str(search) + '%'))
-    results = [cv[0] for cv in query.all()]
-    return jsonify(matching_results=results)
-
-# @app.route('/cities')
-# def citydict():
-#     """."""
-#     res = (City
-#         .query
-#         .limit(10)
-#         .all())
-#     list_cities = [r.as_dict() for r in res]
-#     return jsonify(list_cities)
-
-# @app.route('/process', methods=['POST'])
-# def process():
-#     """."""
-
-#     city = request.form['city']
-#     if city:
-#         return jsonify({'city': city})
-#     return jsonify({'error': 'Data missing...'})
 
 
 #############################################################
