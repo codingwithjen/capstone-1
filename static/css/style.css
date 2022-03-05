@@ -11,7 +11,6 @@
 
 
 body {
-    /* background-color: transparent; */
     font-family: 'Urbanist', sans-serif;
 }
 
@@ -19,10 +18,16 @@ h1 {
     text-align: center;
 }
 
+
 .card {
     margin: 30px auto;
     padding: 50px auto;
     text-align: center;
+}
+
+img.animated-gif {
+    width: 20px;
+    height: 20px;
 }
 
  /* .inner {
@@ -109,6 +114,3 @@ h1 {
 /* .btn {
     padding: .375rem .75rem; margin-top:10px;
 } */
-
-
-/* font-family: 'Urbanist', sans-serif; */
