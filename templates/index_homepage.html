@@ -4,13 +4,39 @@
 
 {% block content %}
 
-<div class="inner" id="inputForm">
+<div class="card mb-3">
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                <div class="form-group">
+                    <!-- Label -->
+                    <!-- <h6 class="card-subtitle mb-2 text-muted"><i class="fas fa-search-location"></i> Enter a city :</h6> -->
+                    {% if form.city.errors %}
+                    {{ form.city(class="form-control form-control-lg is-invalid") }}
+                </div>
+                <div class="invalid-feedback">
+                    {% for error in form.city.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    {{ form.city(class="form-control form-control-lg") }}
+                {% endif %}
+                </div>
+                <div class="form-group">
+                {{ form.submit(class=" form-control form-control-lg btn btn-primary") }}
+                </div>
+                </fieldset>
+            </form>
+        </div>
+</div>
+
+<!-- <div class="inner" id="inputForm">
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
-            <h1 class="nowrap">
-                Weather Search
-            </h1>
         <div class="form-group">
             <label for="cityLabel" class="cityLabel"><i class="fas fa-search-location"></i> Enter a city :</label>
             {% if form.city.errors %}
@@ -30,7 +56,7 @@
         </div>
         </fieldset>
     </form>
-</div>
+</div> -->
 
 {% raw %}
 <script id="result_template" type="text/html">
@@ -82,7 +108,6 @@
 {% block scripts %}
     <!-- AJAX | Google Hosted Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='fetch.js') }}"></script>
 
