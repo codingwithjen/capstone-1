@@ -150,7 +150,7 @@ def index_homepage():
 
 
 #############################################################
-#####              RESTFUL CITIES JSON API              #####
+#####            FETCH API WEATHER RESULTS              #####
 #############################################################
 @app.route('/fetch', methods=['GET', 'POST'])
 def fetch():
@@ -160,7 +160,7 @@ def fetch():
     zipcode = ''
 
     if not city and not zipcode:
-        return jsonify({'error': 'Invalid or missing data'})
+        return jsonify({'error': 'Invalid... Please try again'})
     elif city:
         city = city.lower()
         city = string.capwords(city)
@@ -257,7 +257,21 @@ def logout():
 #####                  User Dashboard                   #####
 #############################################################
 
+@app.route('/users/<int:user_id>')
+def show_dashboard(user_id):
+    """Show user's dashboard."""
 
+    user = User.query.get_or_404(user_id)
+    # Search form at the top
+    form = WeatherForm()
+
+    cities = (City
+                .query.filter(City.user_id == user_id)
+                .limit(5)
+                .all())
+
+    bookmarks = [city.id for city in user.bookmarks]
+    return render_template('users/dashboard.html', user=user, form=form, cities=cities, bookmarks=bookmarks)
 
 
 ##########################################################################
