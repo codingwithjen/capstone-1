@@ -40,7 +40,7 @@ connect_db(app)
 
 @app.before_request
 def add_user_to_g():
-    """If we're logged in, add curr user to Flask global."""
+    """If we're logged in, add curr_user to Flask global."""
 
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
@@ -70,11 +70,27 @@ def kelvin_to_fahrenheit(K):
 def kelvin_to_celsius(K):
     return int(K - 273.15)
 
-# Date Time
+### Date Time
+
+# Full Day, Full Month, Day, Full Year Format
 
 def timestamp_to_datetime(ts, timezone_offset=0):
     ts = ts + timezone_offset
-    return datetime.fromtimestamp(ts).strftime("%x")
+    return datetime.fromtimestamp(ts).strftime("%A, %B %d, %Y")
+
+# Short Day, Short Month, Day Format
+
+def day(ts, timezone_offset=0):
+    ts = ts + timezone_offset
+    return datetime.fromtimestamp(ts).strftime("%a")
+
+def month(ts, timezone_offset=0):
+    ts = ts + timezone_offset
+    return datetime.fromtimestamp(ts).strftime("%b")
+
+def date(ts, timezone_offset=0):
+    ts = ts + timezone_offset
+    return datetime.fromtimestamp(ts).strftime("%d")
 
 # 5-Day Forecast
 
@@ -84,13 +100,15 @@ def get_daily_forecast(daily_weather):
     for item in daily_weather[:-3]:
         # DF = "daily forecast"
         DF = {}
-        DF['datetime'] = timestamp_to_datetime(item['dt'])[:5]
-        DF['fahrenheit'] = kelvin_to_fahrenheit(item['feels_like']['day'])
-        DF['celsius'] = kelvin_to_celsius(item['feels_like']['day'])
+        DF['datetime_day'] = day(item['dt'])[:5]
+        DF['datetime_month'] = month(item['dt'])[:5]
+        DF['datetime_date'] = date(item['dt'])[:5]
+        DF['fahrenheit'] = kelvin_to_fahrenheit(item['temp']['day'])
+        DF['celsius'] = kelvin_to_celsius(item['temp']['day'])
         daily_forecast.append(DF)
     return daily_forecast
 
-# Search City
+# Search current weather on the city called
 
 def get_weather_forecast(res, API_KEY):
     lon = res['coord']['lon']
@@ -104,11 +122,13 @@ def get_weather_forecast(res, API_KEY):
         'current': {
             'city': res['name'].title(),
             'country': res['sys']['country'].upper(),
-            'fahrenheit': kelvin_to_fahrenheit(res['main']['feels_like']),
-            'celsius': kelvin_to_celsius(res['main']['feels_like']),
-            'description': res['weather'][0]['description'],
+            'fahrenheit': kelvin_to_fahrenheit(res['main']['temp']),
+            # 'feels_like_fahrenheit': kelvin_to_fahrenheit(res['main']['feels_like']),
+            # 'feels_like_celsius': kelvin_to_celsius(res['main']['feels_like']),
+            'celsius': kelvin_to_celsius(res['main']['temp']),
+            'description': res['weather'][0]['description'].title(),
             'iconcode': res['weather'][0]['id'],
-            'datetime': timestamp_to_datetime(forecast_res['current']['dt'], forecast_res['timezone_offset'])
+            'datetime': timestamp_to_datetime(forecast_res['current']['dt'])
         },
         'forecast': get_daily_forecast(forecast_res['daily'])
     }
@@ -135,6 +155,7 @@ def index_homepage():
 @app.route('/fetch', methods=['GET', 'POST'])
 def fetch():
     """API endpoint to fetch weather results."""
+
     city = request.form['city']
     zipcode = ''
 
@@ -189,7 +210,7 @@ def signup():
             db.session.commit()
 
         except IntegrityError as e:
-            flash('Username already taken. Please try again.', 'danger')
+            flash('Oh snap! Username already taken. Please change a few things and try submitting again.', 'primary')
             return render_template('signup.html', form=form)
 
         do_login(user)
@@ -197,7 +218,7 @@ def signup():
         return redirect(url_for('index_homepage'))
 
     else:
-        return render_template('signup.html', form=form)
+        return render_template('users/signup.html', form=form)
 
 
 #############################################################

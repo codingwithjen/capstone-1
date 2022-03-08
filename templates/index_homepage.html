@@ -11,8 +11,6 @@
                 {{ form.hidden_tag() }}
                 <fieldset class="form-group">
                 <div class="form-group">
-                    <!-- Label -->
-                    <!-- <h6 class="card-subtitle mb-2 text-muted"><i class="fas fa-search-location"></i> Enter a city :</h6> -->
                     {% if form.city.errors %}
                     {{ form.city(class="form-control form-control-lg is-invalid") }}
                 </div>
@@ -26,49 +24,28 @@
                 {% endif %}
                 </div>
                 <div class="form-group">
-                {{ form.submit(class=" form-control form-control-lg btn btn-primary") }}
+                {{ form.submit(class="form-control form-control-lg btn btn-info") }}
                 </div>
                 </fieldset>
+                <!-- jQuery Image Loader -->
+                <div id="loader" style="display: none;">
+                    <img src="/static/img/loading.gif" class="animated-gif"> <b>Fetching weather data...</b>
+                </div>
+                <!-- jQuery Image Loader -->
             </form>
         </div>
 </div>
 
-<!-- <div class="inner" id="inputForm">
-    <form method="POST" action="">
-        {{ form.hidden_tag() }}
-        <fieldset class="form-group">
-        <div class="form-group">
-            <label for="cityLabel" class="cityLabel"><i class="fas fa-search-location"></i> Enter a city :</label>
-            {% if form.city.errors %}
-            {{ form.city(class="form-control form-control-lg is-invalid") }}
-        </div>
-        <div class="invalid-feedback">
-            {% for error in form.city.errors %}
-            <span>{{ error }}</span>
-            {% endfor %}
-        </div>
-        {% else %}
-            {{ form.city(class="form-control form-control-lg") }}
-        {% endif %}
-        </div>
-        <div class="form-group">
-        {{ form.submit(class=" form-control form-control-lg btn btn-primary") }}
-        </div>
-        </fieldset>
-    </form>
-</div> -->
-
 {% raw %}
 <script id="result_template" type="text/html">
-    <div class="inner">
+    <div class="results">
     {{ #current }}
-        <h1>{{ city }}</h1>
-        <p class="h5">Current Date and Time:</p>
-        <p>{{ datetime }}</p>
-        <i class= "icon wi wi-owm-{{ iconcode }}"></i>
+        <b><h1>{{ city }}, {{ country }}</h1></b>
+        <h5><small class="text-muted">Current Date:&nbsp;&nbsp; {{ datetime }}</small></h5>
+        <h2><i class= "icon wi wi-owm-{{ iconcode }}"></i></h2>
         <p>{{ description }}</p>
-        <p class ="h5"> {{ fahrenheit }} °Fahrenheit</p>
-        <p class="h5"> {{ celsius }} °Celsius</p>
+        <p class ="text-info"><h5> {{ fahrenheit }} °Fahrenheit</h5></p>
+        <p class="text-info"><h5> {{ celsius }} °Celsius</h5></p>
 
         <!-- This shows if the city has been bookmarked -->
         {{ #bookmark }}
@@ -90,11 +67,11 @@
     <div class="forecast-container">
         <div class="row">
         {{ #forecast }}
-        <div class="col-sm">
-            <p class="h5">{{ datetime }}</p><br>
-            <p class="h5"> {{ fahrenheit }} ° Fahrenheit</p>
-            <p class="h5"> {{ celsius }} ° Celsius</p>
-        </div>
+            <div class="col-sm">
+                <p><i class= "icon wi wi-owm-{{ iconcode }}"></i></p>
+                <p class="h5">{{ datetime_day }}, {{ datetime_month }} {{ datetime_date }}</p>
+                <p>{{ fahrenheit }} °Fahrenheit <br>{{ celsius }} °Celsius</p>
+            </div>
         {{ /forecast }}
         </div>
     </div>
@@ -107,7 +84,7 @@
 
 {% block scripts %}
     <!-- AJAX | Google Hosted Libraries -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='fetch.js') }}"></script>
 
