@@ -257,68 +257,6 @@ def logout():
 #####                  User Dashboard                   #####
 #############################################################
 
-@app.route('/users/<int:user_id>')
-def get_dashboard(user_id):
-    """Show user's dashboard."""
-
-    user = User.query.get_or_404(user_id)
-
-    cities = (City
-                .query.filter(City.user_id == user_id)
-                .limit(3)
-                .all())
-    bookmarks = [city.id for city in user.bookmarks]
-    return render_template('users/dashboard.html', user=user, cities=cities, bookmarks=bookmarks)
-
-
-# Bookmark City
-
-# @app.route('/bookmark_city', methods=['GET', 'POST'])
-# def bookmark_city():
-#     """Creates bookmark for city for logged in user."""
-
-#     if not g.user:
-#         flash('Access unauthorized. Please login to proceed.', 'danger')
-#         return redirect(url_for('login'))
-
-#     user_id = g.user.id
-#     user = User.query.get_or_404(user_id)
-
-#     if user:
-#         city = request.form.get['city']
-#         user = User.query.filter_by(id=user_id).first()
-#         user_cities = user.bookmarks
-#         if city not in [c.name for c in user_cities]:
-#             bookmarked_city = City(name=city, user_id=user.id)
-#             db.session.add(bookmarked_city)
-#             db.session.commit()
-#         flash('City has been bookmarked!', 'success')
-
-#     return redirect(url_for('get_dashboard'))
-
-# Remove Bookmark
-
-# @app.route('/bookmark_remove', methods=['GET', 'POST'])
-# def bookmark_remove():
-#     """Removes bookmark for city for logged in user."""
-
-#     if not g.user:
-#         flash('Access unauthorized. Please login to proceed.', 'danger')
-#         return redirect(url_for('login'))
-
-#     user_id = g.user.id
-#     user = User.query.get_or_404(user_id)
-
-#     if user:
-#         city = request.form.get['city']
-#         user = User.query.filter_by(id=user_id).first()
-#         user_cities = user.bookmarks
-#         if city in [c.name for c in user_cities]:
-#             City.query.filter_by(name=city, user_id=user.id).delete()
-#             db.session.commit()
-#             flash('City has been removed from bookmarks.', 'danger')
-
-#     return redirect(url_for('get_dashboard'))
 
 
 

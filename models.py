@@ -59,18 +59,7 @@ class User(db.Model):
                 return user
     
         return False
-        
-    # @classmethod
-    # def check_username(cls, username) -> bool:
-    #     """Checks to see if username is present in the DB."""
 
-    #     return cls.query.filter_by(username=username).one_or_none() if True else False
-
-    # def has_bookmark(self, cities):
-    #     """Finds relevant bookmark for user object by city names.
-    #     Returns bookmark object if found, else None."""
-
-    #     return Bookmark.query.filter_by(cities=cities, user_id=self.id).one_or_none()
 
 # Create the City Model
 class City(db.Model):
@@ -85,10 +74,6 @@ class City(db.Model):
 
     user = db.relationship('User')
 
-    # def as_dict(self):
-    #     return {'city_name': self.city_name}
-
-
 # Create the Bookmark Model
 
 class Bookmark(db.Model):
@@ -99,11 +84,6 @@ class Bookmark(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'))
     city_id = db.Column(db.Integer, db.ForeignKey('cities.id', ondelete='cascade'))
-
-    # def __repr__(self):
-    #     """Returns string representation of instance."""
-
-    #     return f"<Bookmark user:{self.user_id} city:{self.city_id}>"
 
 
 # DO NOT MODIFY
