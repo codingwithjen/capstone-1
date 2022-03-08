@@ -10,6 +10,10 @@
             <form method="POST" action="">
                 {{ form.hidden_tag() }}
                 <fieldset class="form-group">
+                <legend>Search a city</legend>
+                <small class="text-muted">Type a city below in City, State format!</small><br>
+                <small class="text-muted">For example: Seattle,WA</small><br>&nbsp;
+
                 <div class="form-group">
                     {% if form.city.errors %}
                     {{ form.city(class="form-control form-control-lg is-invalid") }}
@@ -22,7 +26,7 @@
                 {% else %}
                     {{ form.city(class="form-control form-control-lg") }}
                 {% endif %}
-                </div>
+                </div>&nbsp;
                 <div class="form-group">
                 {{ form.submit(class="form-control form-control-lg btn btn-info") }}
                 </div>
@@ -84,7 +88,7 @@
 
 {% block scripts %}
     <!-- AJAX | Google Hosted Libraries -->
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='fetch.js') }}"></script>
 

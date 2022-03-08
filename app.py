@@ -239,9 +239,9 @@ def login():
             do_login(user)
             flash(f'Hello, {user.username}!', 'success')
             return redirect('/')
-        flash('Invalid crendentials. Please try again.', 'danger')
+        flash('Oops! Looks like invalid crendetials entered. Please try again!', 'primary')
     
-    return render_template('login.html', form=form)
+    return render_template('users/login.html', form=form)
 
 @app.route('/logout')
 def logout():
@@ -249,7 +249,7 @@ def logout():
 
     do_logout()
 
-    flash('You have successfully logged out.', 'success')
+    flash('See ya later, alligator! You have successfully logged out!', 'success')
     return redirect(url_for('login'))
 
 
