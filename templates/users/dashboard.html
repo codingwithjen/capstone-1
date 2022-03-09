@@ -15,6 +15,22 @@
 
 
 
+
+<div class="forecast-container">
+  {% if cities %}
+      <div class="row">
+          {% for city in user_cities %}
+          <div class="col-sm">
+              <p>{{ city.city_name }}</p>
+          </div>
+          {% endfor %}
+      </div>
+                  </div>
+  {% else %}
+      <p>No Cities Saved</p>
+  {% endif %}
+</div>
+
 {% block scripts %}
   <!-- AJAX | Google Hosted Libraries -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
