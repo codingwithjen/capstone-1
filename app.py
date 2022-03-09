@@ -2,12 +2,13 @@
 
 # from msilib import Table
 import os, json, string, requests
+from chevron import render
 
 from datetime import datetime
-from models import connect_db, db, User, City
+from models import Bookmark, connect_db, db, User, City
 from forms import SignupForm, LoginForm, WeatherForm
 from flask_debugtoolbar import DebugToolbarExtension
-from flask import Flask, request, redirect, render_template, url_for, jsonify, flash, session, g
+from flask import Flask, request, redirect, render_template, url_for, jsonify, flash, session, g, abort
 from sqlalchemy.exc import IntegrityError
 
 # Create your own session
@@ -62,6 +63,8 @@ def do_logout():
 #############################################################
 #####                Helper Decorators                  #####
 #############################################################
+
+#############################################################
 # Conversion
 
 def kelvin_to_fahrenheit(K):
@@ -70,14 +73,17 @@ def kelvin_to_fahrenheit(K):
 def kelvin_to_celsius(K):
     return int(K - 273.15)
 
-### Date Time
+#############################################################
+# Date Time
 
+#############################################################
 # Full Day, Full Month, Day, Full Year Format
 
 def timestamp_to_datetime(ts, timezone_offset=0):
     ts = ts + timezone_offset
     return datetime.fromtimestamp(ts).strftime("%A, %B %d, %Y")
 
+#############################################################
 # Short Day, Short Month, Day Format
 
 def day(ts, timezone_offset=0):
@@ -92,6 +98,7 @@ def date(ts, timezone_offset=0):
     ts = ts + timezone_offset
     return datetime.fromtimestamp(ts).strftime("%d")
 
+#############################################################
 # 5-Day Forecast
 
 def get_daily_forecast(daily_weather):
@@ -108,6 +115,7 @@ def get_daily_forecast(daily_weather):
         daily_forecast.append(DF)
     return daily_forecast
 
+#############################################################
 # Search current weather on the city called
 
 def get_weather_forecast(res, API_KEY):
@@ -115,6 +123,7 @@ def get_weather_forecast(res, API_KEY):
     lat = res['coord']['lat']
     url = f'{API_BASE_URL}/data/2.5/onecall?lat={lat}&lon={lon}&exclude=minutely,hourly&appid={API_KEY}'
 
+#############################################################
     #OpenWeatherAPI Response
 
     forecast_res = requests.get(url).json()
@@ -138,7 +147,6 @@ def get_weather_forecast(res, API_KEY):
 #############################################################
 #####                     Homepage                     #####
 #############################################################
-
 @app.route('/', methods=['GET', 'POST'])
 def index_homepage():
     """Index homepage.
@@ -176,11 +184,11 @@ def fetch():
     else:
         weather_forecast = get_weather_forecast(res, API_KEY)
 
-    if g.user:
-        user = User.query.get(session[CURR_USER_KEY])
-        user_cities = user.cities
-        if city.lower() in [c.name.lower() for c in user_cities]:
-            weather_forecast['bookmark'] = True
+    # if g.user:
+    #     user = User.query.get(session[CURR_USER_KEY])
+    #     user_bookmarks = user.bookmarks
+    #     if city.lower() in [b.name.lower() for b in user_bookmarks]:
+    #         weather_forecast['bookmark'] = True
 
     return jsonify(weather_forecast)
 
@@ -188,8 +196,6 @@ def fetch():
 #############################################################
 #####               Sign-Up User Page                   #####
 #############################################################
-
-
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     """Handle user signup.
@@ -211,7 +217,7 @@ def signup():
 
         except IntegrityError as e:
             flash('Oh snap! Username already taken. Please change a few things and try submitting again.', 'primary')
-            return render_template('signup.html', form=form)
+            return render_template('users/signup.html', form=form)
 
         do_login(user)
 
@@ -220,11 +226,9 @@ def signup():
     else:
         return render_template('users/signup.html', form=form)
 
-
 #############################################################
 #####                Login/Logout Pages                 #####
 #############################################################
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """Produce login form or handle login."""
@@ -240,7 +244,7 @@ def login():
             flash(f'Hello, {user.username}!', 'success')
             return redirect('/')
         flash('Oops! Looks like invalid crendetials entered. Please try again!', 'primary')
-    
+
     return render_template('users/login.html', form=form)
 
 @app.route('/logout')
@@ -256,22 +260,35 @@ def logout():
 #############################################################
 #####                  User Dashboard                   #####
 #############################################################
+# @app.route('/users/<int:user_id>')
+# def show_dashboard(user_id):
+#     """Show user's dashboard."""
 
-@app.route('/users/<int:user_id>')
-def show_dashboard(user_id):
-    """Show user's dashboard."""
+#     user = User.query.get_or_404(user_id)
 
+#     cities = City.query.filter(City.user_id == user_id).all()
+#     return render_template('users/dashboard.html', user=user, cities=cities)
+
+
+#############################################################
+@app.route('/users/bookmarks')
+def user_bookmark():
+    """Show user's dashboard that has all the bookmarks."""
+
+    user_id = g.user.id
     user = User.query.get_or_404(user_id)
-    # Search form at the top
-    form = WeatherForm()
 
-    cities = (City
-                .query.filter(City.user_id == user_id)
-                .limit(5)
-                .all())
+    if user:
+        all_cities = Bookmark.query.filter_by(user_id=user_id).order_by(Bookmark.id.desc()).all()
 
-    bookmarks = [city.id for city in user.bookmarks]
-    return render_template('users/dashboard.html', user=user, form=form, cities=cities, bookmarks=bookmarks)
+        cities = []
+        for city in all_cities:
+            city = {'name': city.city_name, 'id': city.id}
+
+            cities.append(city)
+
+        return render_template('users/dashboard.html', user=user, cities=cities, show_remove=True)
+
 
 
 ##########################################################################
