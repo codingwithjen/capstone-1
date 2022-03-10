@@ -13,14 +13,12 @@ class User(db.Model):
 
     __tablename__ = 'users'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
-
     cities = db.relationship('City', backref='user', lazy=True)
     # bookmarks = db.relationship('Bookmark', foreign_keys='Bookmark.user_id', backref='user')
-
 
     def __repr__(self):
         return f"<User #{self.id}: {self.username}, {self.email}>"
@@ -67,9 +65,8 @@ class City(db.Model):
 
     __tablename__ = 'cities'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    state_name = db.Column(db.String(100))
-    city_name = db.Column(db.String(100))
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'))
 
     # user = db.relationship('User')
