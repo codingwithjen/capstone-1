@@ -19,9 +19,9 @@
 <div class="forecast-container">
   {% if cities %}
       <div class="row">
-          {% for city in user_cities %}
+          {% for city in cities %}
           <div class="col-sm">
-              <p>{{ city.city_name }}</p>
+              <p>{{ city.name }}</p>
           </div>
           {% endfor %}
       </div>

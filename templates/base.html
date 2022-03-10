@@ -81,7 +81,7 @@
               <li class="nav-item">
                 <a
                   class="nav-link"
-                  href="{{ url_for('user_dashboard') }}"   
+                  href="/users/dashboard"   
                   >Dashboard
                 </a>
               </li>
@@ -120,7 +120,7 @@
       {% for category, message in get_flashed_messages(with_categories=True) %}
       <div class="alert alert-dismissible alert-{{ category }} fade show" role="alert">
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        <i class="fa-solid fa-circle-check"></i>&nbsp;&nbsp; <strong> {{ message }} </strong>
+        <i class="fa-solid fa-splotch"></i>&nbsp;&nbsp; <strong> {{ message }} </strong>
       {% endfor %}
       </div>
     </div>

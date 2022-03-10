@@ -2,6 +2,7 @@
 
 # from msilib import Table
 import os, json, string, requests
+from chevron import render
 
 from datetime import datetime
 from models import connect_db, db, User, City
@@ -58,6 +59,7 @@ def do_logout():
 
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
+
 
 #############################################################
 #####                Helper Decorators                  #####
@@ -166,12 +168,14 @@ def fetch():
 
     if not city and not zipcode:
         return jsonify({'error': 'Invalid... Please try again'})
+
     elif city:
         city = city.lower()
         city = string.capwords(city)
         url = f'{API_BASE_URL}/data/2.5/weather?q={city},us&appid={API_KEY}'
 
     # OpenWeatherAPI Response
+
     res = requests.get(url).json()
 
     if res.get('cod') != 200:
@@ -181,14 +185,15 @@ def fetch():
     else:
         weather_forecast = get_weather_forecast(res, API_KEY)
 
-    if g.user:
-        user = User.query.get(session[CURR_USER_KEY])
+    if g.user in session:
+        user_id = g.user
+        user = User.query.get_or_404(user_id)
+        user = User.query.filter_by(user_id).first()
         user_cities = user.cities
-        if city.lower() in [c.city_name.lower() for c in user_cities]:
+        if city.lower() in [c.name.lower() for c in user_cities]:
             weather_forecast['bookmark'] = True
 
     return jsonify(weather_forecast)
-
 
 #############################################################
 #####               Sign-Up User Page                   #####
@@ -264,48 +269,61 @@ def user_dashboard():
     user_id = g.user.id
     user = User.query.get_or_404(user_id)
 
-    if not user:
-        flash('Access unauthorized. Please login first to proceed.', 'primary')
-        return redirect(url_for('signup'))
+    if user:
+        user_cities = City.query.filter_by(user_id=user_id).order_by(City.id.desc()).all()
 
+        cities = []
+        for city in user_cities:
+            city = {'name': city.name, 'id': city.id}
+
+            cities.append(city)
+        
+        return render_template('users/dashboard.html', user=user_id, cities=cities, bookmark=True)
     else:
-        cities = City.query.filter_by(user_id=user_id).all()
-        return render_template('users/dashboard.html', user=user, cities=cities)
+        return render_template('users/dashboard.html')
 
-@app.route('/bookmark_city', methods=['GET', 'POST'])
+    # user = User.query.get_or_404(user_id)
+    # cities = City.query.filter_by(user_id=user).all()
+    # return render_template('users/dashboard.html', user=user, cities=cities)
+
+@app.route('/users/bookmark_city', methods=['GET', 'POST'])
 def bookmark_city():
+
+    if not g.user:
+        flash('Access unauthorized. Please log in first in order to proceed!', 'primary')
+        return redirect('/')
 
     user_id = g.user.id
     user = User.query.get_or_404(user_id)
 
     if user:
-        city = request.form.get['city']
+        city = request.form.get('city')
+        user = User.query.filter_by(id=user.id).first()
         user_cities = user.cities
-        if city not in [c.city_name for c in user_cities]:
-            bookmarked_city = City(city_name=city, user_id=user_id)
+        if city not in [c.name for c in user_cities]:
+            bookmarked_city = City(name=city, user_id=user.id)
             db.session.add(bookmarked_city)
             db.session.commit()
         flash('City has been bookmarked!', 'success')
-    else:
-        flash('Please login first to proceed.', 'primary')
-    return redirect(url_for('user_dashboard'))
+    return redirect(url_for('index_homepage'))
 
-@app.route('/remove_city', methods=['GET', 'POST'])
+@app.route('/users/remove_city/', methods=['GET', 'POST'])
 def remove_city():
 
-    user_id = g.user.id
+    user_id = g.user
     user = User.query.get_or_404(user_id)
 
     if user:
         city = request.form.get['city']
+        user = User.query.filter_by(user_id).first()
         user_cities = user.cities
-        if city in [c.city_name for c in user_cities]:
-            City.query.filter_by(city_name=city, user_id=user_id).delete()
+        if city in [c.name for c in user_cities]:
+            City.query.filter_by(name=city, user_id=user.id).delete()
             db.session.commit()
         flash('City bookmark has been removed!', 'danger')
     else:
-        flash('Please login first to proceed.', 'primary')
-    return redirect(url_for('user_dashboard'))
+        flash('Please log in to proceed.', 'danger')
+    return redirect(url_for('index_homepage'))
 
 
 ##########################################################################
