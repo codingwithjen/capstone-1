@@ -53,20 +53,20 @@
             <p class="card-text">{{ description }}</p>
             <p class ="card-text"><h5> {{ fahrenheit }} °Fahrenheit</h5></p>
             <p class="card-text"><h5> {{ celsius }} °Celsius</h5></p>
+            {{#bookmark}}
             <!-- This shows if the city has been bookmarked -->
-            {{ #bookmark }}
-            <form action="/users/remove_city/", method="POST">
-                <input name="city" type="text" value="{{ city }}" style="display: None">
+            <form action="/users/remove_city", method="POST">
+                <input name="city" type="text" value="{{ city }}" style = "display: None">
                 <button type="submit" class="btn btn-danger">Remove</button>
             </form>
-            {{ /bookmark }}
+            {{/bookmark}}
+            {{^bookmark}}
             <!-- This shows  if the city has not been bookmarked -->
-            {{ ^bookmark }}
             <form action="/users/bookmark_city", method="POST">
-                <input name="city" type="text" value="{{ city }}" style="display: None">
+                <input name="city" type="text" value="{{ city }}" style = "display: None">
                 <button type="submit" class="btn btn-outline-primary">Save</button>
             </form>
-            {{ /bookmark }}
+            {{/bookmark}}
         {{ /current }}
 
         <div class="forecast-container">

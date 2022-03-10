@@ -185,10 +185,15 @@ def fetch():
     else:
         weather_forecast = get_weather_forecast(res, API_KEY)
 
-    if g.user in session:
-        user_id = g.user
-        user = User.query.get_or_404(user_id)
-        user = User.query.filter_by(user_id).first()
+    if not g.user:
+        flash('Access unauthorized. Please log in first in order to proceed!', 'primary')
+        return redirect('/')
+
+    user_id = g.user.id
+    user = User.query.get_or_404(user_id)
+
+    if user:
+        user = User.query.filter_by(id=user.id).first()
         user_cities = user.cities
         if city.lower() in [c.name.lower() for c in user_cities]:
             weather_forecast['bookmark'] = True
@@ -277,14 +282,10 @@ def user_dashboard():
             city = {'name': city.name, 'id': city.id}
 
             cities.append(city)
-        
-        return render_template('users/dashboard.html', user=user_id, cities=cities, bookmark=True)
+
+        return render_template('users/dashboard.html', user=user, cities=cities)
     else:
         return render_template('users/dashboard.html')
-
-    # user = User.query.get_or_404(user_id)
-    # cities = City.query.filter_by(user_id=user).all()
-    # return render_template('users/dashboard.html', user=user, cities=cities)
 
 @app.route('/users/bookmark_city', methods=['GET', 'POST'])
 def bookmark_city():
@@ -307,22 +308,25 @@ def bookmark_city():
         flash('City has been bookmarked!', 'success')
     return redirect(url_for('index_homepage'))
 
-@app.route('/users/remove_city/', methods=['GET', 'POST'])
+@app.route('/users/remove_city', methods=['GET', 'POST'])
 def remove_city():
 
-    user_id = g.user
+    if not g.user:
+        flash('Access unauthorized. Please log in first in order to proceed!', 'primary')
+        return redirect('/')
+
+    user_id = g.user.id
     user = User.query.get_or_404(user_id)
 
     if user:
-        city = request.form.get['city']
-        user = User.query.filter_by(user_id).first()
+        city = request.form.get('city')
+        user = User.query.filter_by(id=user.id).first()
         user_cities = user.cities
         if city in [c.name for c in user_cities]:
-            City.query.filter_by(name=city, user_id=user.id).delete()
+            remove_bookmark = City.query.filter_by(name=city, user_id=user.id).first()
+            db.session.delete(remove_bookmark)
             db.session.commit()
         flash('City bookmark has been removed!', 'danger')
-    else:
-        flash('Please log in to proceed.', 'danger')
     return redirect(url_for('index_homepage'))
 
 
