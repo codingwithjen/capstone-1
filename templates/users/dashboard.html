@@ -5,31 +5,36 @@
 {% block content %}
 
 <div class="card mb-3" style="max-width: 60rem;">
-    <h3 class="card-header">{{ g.user.username }}'s Dashboard</h3>
+    <h3 class="card-header">User's Dashboard</h3>
     <div class="card-body">
-        <!-- <h6 class="card-subtitle text-muted">{{ g.user.username }}'s Bookmarks:</h6> -->
+        <h6 class="card-subtitle text-muted">{{ g.user.username }}'s Bookmarks:</h6>
+    </div>
+    <div class="forecast-container">
+        {% if cities %}
+        <div class="row">
+            {% for city in cities %}
+            <div class="col-sm">
+                <p>{{ city.name }}</p>
+                <p><i class= "icon wi wi-owm-{{ city.iconcode }}"></i></p>
+                <p>{{ city.description }}</p>
+                <p>{{ city.fahrenheit }}</p>
+                <p>{{ city.celsius }}</p>
+                <div>
+                <a href="{{ url_for('delete_city', name=city.name) }}">
+                <button type="button" class="btn btn-danger">Remove</button>
+            </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+                    </div>
+    {% else %}
+        <p>No Cities Saved</p>
+    {% endif %}
     </div>
 
 </div>
 
-
-
-
-
-<div class="forecast-container">
-  {% if cities %}
-      <div class="row">
-          {% for city in cities %}
-          <div class="col-sm">
-              <p>{{ city.name }}</p>
-          </div>
-          {% endfor %}
-      </div>
-                  </div>
-  {% else %}
-      <p>No Cities Saved</p>
-  {% endif %}
-</div>
 
 {% block scripts %}
   <!-- AJAX | Google Hosted Libraries -->

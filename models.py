@@ -18,7 +18,6 @@ class User(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
     cities = db.relationship('City', backref='user', lazy=True)
-    # bookmarks = db.relationship('Bookmark', foreign_keys='Bookmark.user_id', backref='user')
 
     def __repr__(self):
         return f"<User #{self.id}: {self.username}, {self.email}>"
@@ -67,23 +66,11 @@ class City(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'), nullable=False)
 
-    # user = db.relationship('User')
 
     def __repr__(self):
         return f"City('{self.city_name}', '{self.user_id}'"
-
-# Create the Bookmark Model
-
-# class Bookmark(db.Model):
-#     """Bookmarks Model."""
-
-#     __tablename__ = 'bookmarks'
-
-#     id = db.Column(db.Integer, primary_key=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'))
-#     city_id = db.Column(db.Integer, db.ForeignKey('cities.id', ondelete='cascade'))
 
 
 # DO NOT MODIFY

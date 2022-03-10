@@ -100,12 +100,21 @@ def date(ts, timezone_offset=0):
     return datetime.fromtimestamp(ts).strftime("%d")
 
 #############################################################
+# Weather Data for the Dashboard
+
+def get_weather_data(city):
+    url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}'
+    r = requests.get(url).json()
+    return r
+
+#############################################################
 # 5-Day Forecast
 
 def get_daily_forecast(daily_weather):
 
     daily_forecast = []
     for item in daily_weather[:-3]:
+
         # DF = "daily forecast"
         DF = {}
         DF['datetime_day'] = day(item['dt'])[:5]
@@ -185,14 +194,13 @@ def fetch():
     else:
         weather_forecast = get_weather_forecast(res, API_KEY)
 
-    if not g.user:
-        flash('Access unauthorized. Please log in first in order to proceed!', 'primary')
-        return redirect('/')
+    # if not g.user:
+    #     flash('Access unauthorized. Please log in first in order to proceed!', 'primary')
+    #     return redirect('/')
 
-    user_id = g.user.id
-    user = User.query.get_or_404(user_id)
-
-    if user:
+    if CURR_USER_KEY in session:
+        user_id = g.user.id
+        user = User.query.get_or_404(user_id)
         user = User.query.filter_by(id=user.id).first()
         user_cities = user.cities
         if city.lower() in [c.name.lower() for c in user_cities]:
@@ -278,8 +286,16 @@ def user_dashboard():
         user_cities = City.query.filter_by(user_id=user_id).order_by(City.id.desc()).all()
 
         cities = []
+
         for city in user_cities:
-            city = {'name': city.name, 'id': city.id}
+
+            r = get_weather_data(city.name)
+
+            city = {'name': city.name,
+                    'fahrenheit': kelvin_to_fahrenheit(r['main']['temp']),
+                    'celsius': kelvin_to_celsius(r['main']['temp']),
+                    'description': r['weather'][0]['description'].title(),
+                    'iconcode': r['weather'][0]['id'],}
 
             cities.append(city)
 
@@ -328,6 +344,16 @@ def remove_city():
             db.session.commit()
         flash('City bookmark has been removed!', 'danger')
     return redirect(url_for('index_homepage'))
+    
+
+@app.route('/delete/<name>')
+def delete_city(name):
+    city = City.query.filter_by(name=name).first()
+    db.session.delete(city)
+    db.session.commit()
+
+    flash(f'Successfully deleted { city.name }', 'warning')
+    return redirect(url_for('user_dashboard'))
 
 
 ##########################################################################
