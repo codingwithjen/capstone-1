@@ -32,7 +32,13 @@
         <p>No Cities Saved</p>
     {% endif %}
     </div>
-
+    {% if g.user %}
+    <div class="delete_user" style="text-align: center;">
+        <form method="POST" action="/users/delete">
+            <button class="btn btn-outline-secondary">Delete Account</button>
+     </form>
+    </div>
+    {% endif %}
 </div>
 
 

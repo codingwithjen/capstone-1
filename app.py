@@ -8,7 +8,7 @@ from datetime import datetime
 from models import connect_db, db, User, City
 from forms import SignupForm, LoginForm, WeatherForm
 from flask_debugtoolbar import DebugToolbarExtension
-from flask import Flask, request, redirect, render_template, url_for, jsonify, flash, session, g, abort
+from flask import Flask, request, redirect, render_template, url_for, jsonify, flash, session, g, abort, Markup
 from sqlalchemy.exc import IntegrityError
 
 # Create your own session
@@ -162,7 +162,7 @@ def index_homepage():
     Renders HTML template that includes some JS.
     Not part of JSON API! Weather form to fetch API results."""
 
-    form = WeatherForm()
+    form = WeatherForm(request.form)
     return render_template('index_homepage.html', form=form)
 
 
@@ -257,9 +257,9 @@ def login():
 
         if user:
             do_login(user)
-            flash(f'Hello, {user.username}!', 'success')
+            flash(f'Hello, {user.username}! Welcome back! How you doin???', 'success')
             return redirect('/')
-        flash('Oops! Looks like invalid crendetials entered. Please try again!', 'primary')
+        flash('Oops! Looks like invalid crendetials have been entered. Please try again... with better, and accurate credentials!', 'primary')
 
     return render_template('users/login.html', form=form)
 
@@ -308,7 +308,7 @@ def user_dashboard():
 def bookmark_city():
 
     if not g.user:
-        flash('Access unauthorized. Please log in first in order to proceed!', 'primary')
+        flash(Markup('Access unauthorized. Please <a href="/login" class=alert-link>log in</a> first in order to proceed!'), 'primary')
         return redirect('/')
 
     user_id = g.user.id
@@ -322,14 +322,14 @@ def bookmark_city():
             bookmarked_city = City(name=city, user_id=user.id)
             db.session.add(bookmarked_city)
             db.session.commit()
-        flash('City has been bookmarked!', 'success')
+        flash('Oh hayyy!!! You added this city to your bookmarks!', 'success')
     return redirect(url_for('index_homepage'))
 
 @app.route('/users/remove_city', methods=['GET', 'POST'])
 def remove_city():
 
     if not g.user:
-        flash('Access unauthorized. Please log in first in order to proceed!', 'primary')
+        flash(Markup('Access unauthorized. Please <a href="/login" class=alert-link>log in</a> first in order to proceed!'), 'primary')
         return redirect('/')
 
     user_id = g.user.id
@@ -343,9 +343,9 @@ def remove_city():
             remove_bookmark = City.query.filter_by(name=city, user_id=user.id).first()
             db.session.delete(remove_bookmark)
             db.session.commit()
-        flash('City bookmark has been removed!', 'danger')
+        flash('Okaaay fine... you removed that city from your bookmarks!', 'danger')
     return redirect(url_for('index_homepage'))
-    
+
 
 @app.route('/delete/<name>')
 def delete_city(name):
@@ -353,8 +353,24 @@ def delete_city(name):
     db.session.delete(city)
     db.session.commit()
 
-    flash(f'Successfully deleted { city.name }', 'warning')
+    flash(f'Okaaay, fine... You have successfully deleted { city.name } out of your entire existence on this app. Hehe...', 'warning')
     return redirect(url_for('user_dashboard'))
+
+@app.route('/users/delete', methods=['POST'])
+def delete_user():
+    """Delete user."""
+
+    if not g.user:
+        flash(Markup('Access unauthorized. Please <a href="/login" class=alert-link>log in</a> first in order to proceed!'), 'primary')
+        return redirect('/')
+    
+    do_logout()
+
+    db.session.delete(g.user)
+    db.session.commit()
+
+    flash('Sad face! Your account was deleted. You will be missed!', 'primary')
+    return redirect(url_for('signup'))
 
 
 ##########################################################################
