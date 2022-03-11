@@ -2,7 +2,7 @@
 
 from app import db
 # from csv import DictReader
-from models import User, City
+# from models import User, City
 
 # Create all tables
 # db.drop_all()
@@ -13,5 +13,5 @@ db.create_all()
 #     db.session.bulk_insert_mappings(City, DictReader(cities))
 
 # us_cities.csv db from https://github.com/kelvins/US-Cities-Database, revised to fit my schemas
-db.session.commit()
+# db.session.commit()
 
