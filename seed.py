@@ -5,7 +5,7 @@ from app import db
 from models import User, City
 
 # Create all tables
-db.drop_all()
+# db.drop_all()
 db.create_all()
 
 # Seed database with cities data from CSV files
