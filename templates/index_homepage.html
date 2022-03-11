@@ -73,8 +73,9 @@
             <div class="row">
             {{ #forecast }}
                 <div class="col-sm">
-                    <p><i class= "icon wi wi-owm-{{ icon }}"></i></p>
+                    <hr>
                     <p class="h5">{{ datetime_day }}, {{ datetime_month }} {{ datetime_date }}</p>
+                    <p><i class= "icon wi wi-owm-{{ iconcode }}"></i></p>
                     <p>{{ fahrenheit }} °Fahrenheit <br>{{ celsius }} °Celsius</p>
                 </div>
             {{ /forecast }}

@@ -120,6 +120,7 @@ def get_daily_forecast(daily_weather):
         DF['datetime_day'] = day(item['dt'])[:5]
         DF['datetime_month'] = month(item['dt'])[:5]
         DF['datetime_date'] = date(item['dt'])[:5]
+        DF['iconcode'] = item['weather'][0]['id']
         DF['fahrenheit'] = kelvin_to_fahrenheit(item['temp']['day'])
         DF['celsius'] = kelvin_to_celsius(item['temp']['day'])
         daily_forecast.append(DF)
