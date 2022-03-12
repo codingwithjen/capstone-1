@@ -22,9 +22,9 @@ app = Flask(__name__)
 
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
-app.config['SQLALCHEMY_DATABASE_URI'] = (os.environ.get('DATABASE_URL').replace("://", "ql://", 1) or 'postgresql:///weatherflasksearch'
+app.config['SQLALCHEMY_DATABASE_URI'] = (os.environ.get('DATABASE_URL', 'postgresql:///weatherflasksearch')
 
-# the toolbar is only enabled in debug mode: set to True
+
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
