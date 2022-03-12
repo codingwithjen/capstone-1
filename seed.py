@@ -1,6 +1,7 @@
 """Seed file to generate basic data in DB."""
 
-from app import db
+from app import app
+from models import db
 # from csv import DictReader
 # from models import User, City
 
