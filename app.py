@@ -3,7 +3,7 @@
 # from msilib import Table
 import os, json, string, requests
 from chevron import render
-
+from dotenv import load_dotenv
 from datetime import datetime
 from models import connect_db, db, User, City
 from forms import SignupForm, LoginForm, WeatherForm
@@ -33,6 +33,7 @@ app.config['SQLALCHEMY_ECHO'] = False
 # the toolbar is only enabled in debug mode, uncomment the line below to enable
 # toolbar = DebugToolbarExtension(app)
 
+load_dotenv()
 connect_db(app)
 
 #############################################################
