@@ -22,7 +22,7 @@ app = Flask(__name__)
 
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
-app.config['SQLALCHEMY_DATABASE_URI'] = (os.environ.get('DATABASE_URL', 'postgres:///weatherflasksearch'))
+app.config['SQLALCHEMY_DATABASE_URI'] = (os.environ.get('DATABASE_URL', 'postgresql:///weatherflasksearch'))
 
 # the toolbar is only enabled in debug mode: set to True
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
@@ -307,6 +307,7 @@ def user_dashboard():
 
 @app.route('/users/bookmark_city', methods=['GET', 'POST'])
 def bookmark_city():
+    """User can bookmark desired city and it will show up on their dashboard if they have an account."""
 
     if not g.user:
         flash(Markup('Access unauthorized. Please <a href="/login" class=alert-link>log in</a> first in order to proceed!'), 'primary')
@@ -328,6 +329,7 @@ def bookmark_city():
 
 @app.route('/users/remove_city', methods=['GET', 'POST'])
 def remove_city():
+    """Remove and delete bookmarked city if it pips up on the homepage search when it runs via AJAX."""
 
     if not g.user:
         flash(Markup('Access unauthorized. Please <a href="/login" class=alert-link>log in</a> first in order to proceed!'), 'primary')
@@ -347,9 +349,10 @@ def remove_city():
         flash('Okaaay fine... you removed that city from your bookmarks!', 'danger')
     return redirect(url_for('index_homepage'))
 
-
 @app.route('/delete/<name>')
 def delete_city(name):
+    """Delete bookmarked city from the user's dashboard."""
+
     city = City.query.filter_by(name=name).first()
     db.session.delete(city)
     db.session.commit()
