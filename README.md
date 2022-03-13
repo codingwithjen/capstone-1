@@ -1,16 +1,31 @@
-# Springboard's Capstone-1 Project
-### Weather App API
+#  Weather Flask Search
+---
+**Live Demo/Deployed Web App:** <https://flask-weather-app-1.herokuapp.com/>
+**External API Used:** <https://openweathermap.org/api>
+---
+## Description
+A weather forecasting web application that allows users to see the conditions, forecast, temperature, and other related metrics based on the user's desired location, as well as a number of other cities. Users can create an account to bookmark cities at their leisure, and can continue tracking those cities via a dashboard. The web app performs an API call to a third-party resource to acquire weather data on each city searched, and the web applicaiton stores user information and bookmarks on our database.
+---
+## Features
+- jQuery Ajax used to fetch current weather conditions, along with a five-day weather forecast for the particular city searched by the user, without the need of redirecting user to a new page with results; faster response, no need for page to reload
+- Functionality to bookmark and remove cities built using **CRUD operation**
+- Usage of **Flask-SQLAlchemy** to build Database to store user information, and to keep track of the user's dashboard, which contains bookmarked cities with current weather data information fetched from the external API
+- Usage of **Flask-Bcrypt** for user Authorization and Authentication, and password security
+    - Login and registration handled on server-side with the use of Flask and WTForms
+    - Can bookmark cities to easily access them via their dashboard, once the user is logged in
+    - An account is not required to search weather data
+- Usage of {{ mustache }} templating, along with Jinja templating
+- **Deployment with Heroku, and adding a Postgres Database**
 
-Versions I am currently using and instructions are based off of this<br>
+---
+## Features in Development
+- Ability to reset password if the user forgot crendentials
+- Ability to delete the user's account
+- Ability to include an autocomplete search bar with all US cities
+    - Only US cities, due to just wanting to use OpenWeatherMap API and having a csv file of us_cities imported into *seed.py* file
 
-Python --version *3.9.6*<br> - you will need Python installed on a local environment<br>
-macOS Monterey *Version 12.0.1*<br>
-PostgreSQL *v13*<br>
-Check the *requirements.txt* file to see the different packages installed and their versions <br>
-Mustache.js used <br>
-
-# Set Up
-
+---
+## Set Up
 First, Git Clone the Repo in Command Line (Instructions for Mac Users):
 1. COMMAND + SPACE BAR and type in search "terminal"
 2. In the Terminal window, choose the location you want the directory located in
@@ -24,10 +39,42 @@ First, Git Clone the Repo in Command Line (Instructions for Mac Users):
 9.1 Or you can create a .env file in your root directory. That's where I put my API key and I hid it in my *.gitignore* :)
 10. Use your local server URL on a browser (I use Chrome) http://localhost:5000/.
 11. To end the live server, on the Terminal window, enter CONTROL + C
-12. 
-
 ---
 
+## Screenshots
+Homepage below:
+![Homepage of Weather Flask Search](/static/img/Homepage.png "Homepage of Weather Flask Search")
+Dashboard if you are a registered user:
+![Dashboard of Weather Flask Serach](/static/img/Dashboard.png "Dashboard of Weather Flask Search")
+---
+## Tech Stack
+---
+### Languages:
+- HTML5
+- CSS
+- Python3
+- JavaScript
+- SQL
+    - PostgreSQL
+
+### Libaries/Tools:
+- Flask
+- jQuery AJAX
+- Bootstrap
+- Bcrypt
+- SQLAlchemy
+- Flask-DebugToolbar
+- WTForms
+- Jinja
+- requests
+- npm
+    - {{ mustache }}
+
+### Versions Used
+- Python --version 3.9.6
+- PostgreSQL v13
+- All else found in requirements.txt, runtime.txt, Profile
+---
 ### Sources:
 
 1. [user_obj.is_authenticated] (https://www.rithmschool.com/courses/intermediate-flask/authentication-with-flask-login)<br>
@@ -35,6 +82,4 @@ First, Git Clone the Repo in Command Line (Instructions for Mac Users):
 3. [mustache.js] (https://www.npmjs.com/package/mustache)
 4. [cdnjs.cloudflare.com] (https://cdnjs.cloudflare.com/)
 5. [Google Hosted Libraries] (https://developers.google.com/speed/libraries)
-
-
 
