@@ -1,11 +1,11 @@
 #  Weather Flask Search
----
+
 **Live Demo/Deployed Web App:** <https://flask-weather-app-1.herokuapp.com/>
 **External API Used:** <https://openweathermap.org/api>
----
+
 ## Description
 A weather forecasting web application that allows users to see the conditions, forecast, temperature, and other related metrics based on the user's desired location, as well as a number of other cities. Users can create an account to bookmark cities at their leisure, and can continue tracking those cities via a dashboard. The web app performs an API call to a third-party resource to acquire weather data on each city searched, and the web applicaiton stores user information and bookmarks on our database.
----
+
 ## Features
 - jQuery Ajax used to fetch current weather conditions, along with a five-day weather forecast for the particular city searched by the user, without the need of redirecting user to a new page with results; faster response, no need for page to reload
 - Functionality to bookmark and remove cities built using **CRUD operation**
@@ -15,16 +15,17 @@ A weather forecasting web application that allows users to see the conditions, f
     - Can bookmark cities to easily access them via their dashboard, once the user is logged in
     - An account is not required to search weather data
 - Usage of {{ mustache }} templating, along with Jinja templating
+- Flask sessions used to keep track of users, whether registered or anon-user
 - **Deployment with Heroku, and adding a Postgres Database**
 
----
+
 ## Features in Development
 - Ability to reset password if the user forgot crendentials
 - Ability to delete the user's account
 - Ability to include an autocomplete search bar with all US cities
     - Only US cities, due to just wanting to use OpenWeatherMap API and having a csv file of us_cities imported into *seed.py* file
 
----
+
 ## Set Up
 First, Git Clone the Repo in Command Line (Instructions for Mac Users):
 1. COMMAND + SPACE BAR and type in search "terminal"
@@ -39,16 +40,16 @@ First, Git Clone the Repo in Command Line (Instructions for Mac Users):
 9.1 Or you can create a .env file in your root directory. That's where I put my API key and I hid it in my *.gitignore* :)
 10. Use your local server URL on a browser (I use Chrome) http://localhost:5000/.
 11. To end the live server, on the Terminal window, enter CONTROL + C
----
+
 
 ## Screenshots
 Homepage below:
 ![Homepage of Weather Flask Search](/static/img/Homepage.png "Homepage of Weather Flask Search")
 Dashboard if you are a registered user:
 ![Dashboard of Weather Flask Serach](/static/img/Dashboard.png "Dashboard of Weather Flask Search")
----
+
 ## Tech Stack
----
+
 ### Languages:
 - HTML5
 - CSS
