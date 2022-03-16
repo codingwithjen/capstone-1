@@ -84,3 +84,8 @@ Dashboard if you are a registered user:
 4. [cdnjs.cloudflare.com] (https://cdnjs.cloudflare.com/)
 5. [Google Hosted Libraries] (https://developers.google.com/speed/libraries)
 
+### Credit:
+1. [kammybdeng] (https://github.com/kammybdeng/weather_flask_webapp)
+2. [AgrimNautiyal] (https://github.com/AgrimNautiyal/flask-weather-app)
+3. [dtdkhoi] (https://github.com/dtdkhoi/WeatherDashboard)
+4. [Pretty Printed vid] (https://www.youtube.com/watch?v=lWA0GgUN8kg)
