@@ -40,6 +40,7 @@ First, Git Clone the Repo in Command Line (Instructions for Mac Users):
 9.1 Or you can create a .env file in your root directory. That's where I put my API key and I hid it in my *.gitignore* :)
 10. Use your local server URL on a browser (I use Chrome) http://localhost:5000/.
 11. To end the live server, on the Terminal window, enter CONTROL + C
+12. Since I used an **npm** package, you can install that package by adding this into your root project directory `npm install axios`
 
 
 ## Screenshots
