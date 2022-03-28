@@ -4,10 +4,10 @@
 import os, json, string, requests
 import re
 from chevron import render
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from datetime import datetime
 from models import connect_db, db, User, City
-from forms import SignupForm, LoginForm, WeatherForm
+from forms import SignupForm, LoginForm, WeatherForm, SearchForm
 from flask_debugtoolbar import DebugToolbarExtension
 from flask import Flask, request, redirect, render_template, url_for, jsonify, flash, session, g, abort, Markup
 from sqlalchemy.exc import IntegrityError
@@ -23,8 +23,8 @@ app = Flask(__name__)
 
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL').replace("://", "ql://", 1) or 'postgresql:///weatherflasksearch'
-
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL').replace("://", "ql://", 1) or 'postgresql:///weatherflasksearch'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql:///weatherflasksearch')
 # uri = os.getenv("DATABASE_URL")  # or other relevant config var
 # if uri.startswith("postgres://"):
 #     uri = uri.replace("postgres://", "postgresql://", 1)
@@ -39,7 +39,7 @@ app.config['SQLALCHEMY_ECHO'] = False
 # the toolbar is only enabled in debug mode, uncomment the line below to enable
 # toolbar = DebugToolbarExtension(app)
 
-load_dotenv()
+# load_dotenv()
 connect_db(app)
 
 #############################################################
@@ -159,18 +159,47 @@ def get_weather_forecast(res, API_KEY):
     }
     return weather_forecast
 
-
 #############################################################
 #####                     Homepage                     #####
 #############################################################
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def index_homepage():
     """Index homepage.
     Renders HTML template that includes some JS.
     Not part of JSON API! Weather form to fetch API results."""
 
     form = WeatherForm(request.form)
+
+    if form.validate_on_submit():
+        return redirect(url_for('show_results'))
     return render_template('index_homepage.html', form=form)
+
+#############################################################
+#####                     Results                       #####
+#############################################################
+@app.route('/show', methods=['GET', 'POST'])
+def show_results():
+    """Once city has been entered on the homepage, this will
+    render a page with weather data."""
+
+    form = WeatherForm(request.form)
+    return render_template('show.html', form=form)
+
+@app.route('/search', methods=['GET', 'POST'])
+def search_city():
+    """Handle GET Requests like /search?city=Seattle"""
+
+    city = request.args.get('q')
+    url = f'{API_BASE_URL}/data/2.5/weather?q={city},us&appid={API_KEY}'
+    res = requests.get(url).json()
+
+    # Error Message
+    if res.get('cod') !=200:
+        message = res.get('message', '')
+        return f'Error getting weather for {city}. Error message = {message}'
+    else:
+        city = City.query.filter(City.name.like(f'%{city}%')).all()
+    return render_template('index_homepage.html', city=city)
 
 
 #############################################################
@@ -202,10 +231,6 @@ def fetch():
     else:
         weather_forecast = get_weather_forecast(res, API_KEY)
 
-    # if not g.user:
-    #     flash('Access unauthorized. Please log in first in order to proceed!', 'primary')
-    #     return redirect('/')
-
     if CURR_USER_KEY in session:
         user_id = g.user.id
         user = User.query.get_or_404(user_id)
@@ -215,6 +240,7 @@ def fetch():
             weather_forecast['bookmark'] = True
 
     return jsonify(weather_forecast)
+
 
 #############################################################
 #####               Sign-Up User Page                   #####

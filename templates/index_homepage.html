@@ -7,28 +7,14 @@
 <div class="card mb-3" style="max-width: 60rem;">
     <div class="card">
         <div class="card-body">
-            <form method="POST" action="">
-                {{ form.hidden_tag() }}
+            <form methods="POST" action="/search">
                 <fieldset class="form-group">
                 <legend>Search a city</legend>
-                <small class="text-muted">Type a city below in City, State format!</small><br>
-                <small class="text-muted">For example: Seattle,WA</small><br>&nbsp;
-
+                <small class="text-muted">Type a city below!</small><br>
+                <!-- <small class="text-muted">For example: Seattle,WA</small><br>&nbsp; -->
+                <input name="q" class="form-control" placeholder="Enter a city" id="city"><br>
                 <div class="form-group">
-                    {% if form.city.errors %}
-                    {{ form.city(class="form-control form-control-lg is-invalid") }}
-                </div>
-                <div class="invalid-feedback">
-                    {% for error in form.city.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% else %}
-                    {{ form.city(class="form-control form-control-lg") }}
-                {% endif %}
-                </div>&nbsp;
-                <div class="form-group">
-                {{ form.submit(class="form-control form-control-lg btn btn-info") }}
+                <button type="submit" class="form-control form-control-lg btn btn-info">Search</button>
                 </div>
                 </fieldset>
                 <!-- jQuery Image Loader -->
@@ -40,64 +26,14 @@
         </div>
 </div>
 
-{% raw %}
-<script id="result_template" type="text/html">
-    <div class="card border-primary mb-3" style="max-width: 50rem;">
-        <div class="card-header">Weather Results</div>
-        <!-- City Results -->
-        <div class="card-body">
-        {{ #current }}
-        <h5><small class="text-muted">Current Date:&nbsp;&nbsp; {{ datetime }}</small></h5>
-        <h2><i class= "icon wi wi-owm-{{ iconcode }}"></i></h2>
-            <h4 class="card-title">{{ city }}, {{ country }}</h4>
-            <p class="card-text">{{ description }}</p>
-            <p class ="card-text"><h5> {{ fahrenheit }} °Fahrenheit</h5></p>
-            <p class="card-text"><h5> {{ celsius }} °Celsius</h5></p>
-            {{#bookmark}}
-            <!-- This shows if the city has been bookmarked -->
-            <form action="/users/remove_city", method="POST">
-                <input name="city" type="text" value="{{ city }}" style = "display: None">
-                <button type="submit" class="btn btn-danger">Remove</button>
-            </form>
-            {{/bookmark}}
-            {{^bookmark}}
-            <!-- This shows  if the city has not been bookmarked -->
-            <form action="/users/bookmark_city", method="POST">
-                <input name="city" type="text" value="{{ city }}" style = "display: None">
-                <button type="submit" class="btn btn-outline-primary">Save</button>
-            </form>
-            {{/bookmark}}
-        {{ /current }}
-
-        <div class="forecast-container">
-            <div class="row">
-            {{ #forecast }}
-                <div class="col-sm">
-                    <hr>
-                    <p class="h5">{{ datetime_day }}, {{ datetime_month }} {{ datetime_date }}</p>
-                    <p><i class= "icon wi wi-owm-{{ iconcode }}"></i></p>
-                    <p>{{ fahrenheit }} °Fahrenheit <br>{{ celsius }} °Celsius</p>
-                </div>
-            {{ /forecast }}
-            </div>
-        </div>
-        </div>
-    </div>
-</script>
-{% endraw %}
-<div id="result"></div>
-
-    
-
-
 {% block scripts %}
     <!-- AJAX | Google Hosted Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
-    <script src="{{ url_for('static', filename='fetch.js') }}"></script>
+    <!-- <script src="{{ url_for('static', filename='fetch.js') }}"></script> -->
 
     <!-- Mustache -->
-    <script src="https://cdn.jsdelivr.net/npm/mustache@4.2.0-beta.0/mustache.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/mustache@4.2.0-beta.0/mustache.min.js"></script> -->
 {% endblock scripts %}
 
 {% endblock %}
