@@ -4,47 +4,13 @@
 
 {% block content %}
 
-<div class="card mb-3" style="max-width: 60rem;">
-    <div class="card">
-        <div class="card-body">
-            <form method="POST" action="/search">
-                {{ form.hidden_tag() }}
-                <fieldset class="form-group">
-                <legend>Search a city</legend>
-                <small class="text-muted">Type a city below!</small><br>
-                <!-- <small class="text-muted">For example: Seattle,WA</small><br>&nbsp; -->
 
-                <div class="form-group">
-                    {% if form.city.errors %}
-                    {{ form.city(class="form-control form-control-lg is-invalid") }}
-                </div>
-                <div class="invalid-feedback">
-                    {% for error in form.city.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% else %}
-                    {{ form.city(class="form-control form-control-lg") }}
-                {% endif %}
-                </div>&nbsp;
-                <div class="form-group">
-                {{ form.submit(class="form-control form-control-lg btn btn-info") }}
-                </div>
-                </fieldset>
-                <!-- jQuery Image Loader -->
-                <div id="loader" style="display: none;">
-                    <img src="/static/img/loading.gif" class="animated-gif"> <b>Fetching weather data...</b>
-                </div>
-                <!-- jQuery Image Loader -->
-            </form>
-        </div>
-</div>
 
 {% raw %}
-<script id="result_template" type="text/html">
+<!-- <script id="result_template" type="text/html"> -->
     <div class="card border-primary mb-3" style="max-width: 50rem;">
         <div class="card-header">Weather Results</div>
-        <!-- City Results -->
+
         <div class="card-body">
         {{ #current }}
         <h5><small class="text-muted">Current Date:&nbsp;&nbsp; {{ datetime }}</small></h5>
@@ -54,14 +20,14 @@
             <p class ="card-text"><h5> {{ fahrenheit }} °Fahrenheit</h5></p>
             <p class="card-text"><h5> {{ celsius }} °Celsius</h5></p>
             {{#bookmark}}
-            <!-- This shows if the city has been bookmarked -->
+
             <form action="/users/remove_city", method="POST">
                 <input name="city" type="text" value="{{ city }}" style = "display: None">
                 <button type="submit" class="btn btn-danger">Remove</button>
             </form>
             {{/bookmark}}
             {{^bookmark}}
-            <!-- This shows  if the city has not been bookmarked -->
+
             <form action="/users/bookmark_city", method="POST">
                 <input name="city" type="text" value="{{ city }}" style = "display: None">
                 <button type="submit" class="btn btn-outline-primary">Save</button>
@@ -83,7 +49,7 @@
         </div>
         </div>
     </div>
-</script>
+<!-- </script> -->
 <div id="result"></div>
 {% endraw %}
 

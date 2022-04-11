@@ -1,9 +1,6 @@
 """Your Weather Flask Application."""
 
-# from msilib import Table
 import os, json, string, requests
-import re
-from chevron import render
 # from dotenv import load_dotenv
 from datetime import datetime
 from models import connect_db, db, User, City
@@ -21,22 +18,14 @@ API_BASE_URL = "https://api.openweathermap.org/"
 
 app = Flask(__name__)
 
-# Get DB_URI from environ variable (useful for production/testing) or,
-# if not set there, use development local db.
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL').replace("://", "ql://", 1) or 'postgresql:///weatherflasksearch'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql:///weatherflasksearch')
-# uri = os.getenv("DATABASE_URL")  # or other relevant config var
-# if uri.startswith("postgres://"):
-#     uri = uri.replace("postgres://", "postgresql://", 1)
-# rest of connection code using the connection string `uri`
 
-# the toolbar is only enabled in debug mode: set to True
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 
-# the toolbar is only enabled in debug mode, uncomment the line below to enable
 # toolbar = DebugToolbarExtension(app)
 
 # load_dotenv()
@@ -80,9 +69,6 @@ def kelvin_to_fahrenheit(K):
 
 def kelvin_to_celsius(K):
     return int(K - 273.15)
-
-#############################################################
-# Date Time
 
 #############################################################
 # Full Day, Full Month, Day, Full Year Format
@@ -142,7 +128,7 @@ def get_weather_forecast(res, API_KEY):
     url = f'{API_BASE_URL}/data/2.5/onecall?lat={lat}&lon={lon}&exclude=minutely,hourly&appid={API_KEY}'
 
 #############################################################
-    #OpenWeatherAPI Response
+# OpenWeatherAPI Response
 
     forecast_res = requests.get(url).json()
     weather_forecast = {
@@ -182,8 +168,8 @@ def show_results():
     """Once city has been entered on the homepage, this will
     render a page with weather data."""
 
-    form = WeatherForm(request.form)
-    return render_template('show.html', form=form)
+    city = request.args.get('city')
+    return render_template('show.html', city=city)
 
 @app.route('/search', methods=['GET', 'POST'])
 def search_city():
@@ -197,10 +183,10 @@ def search_city():
     if res.get('cod') !=200:
         message = res.get('message', '')
         return f'Error getting weather for {city}. Error message = {message}'
-    else:
-        city = City.query.filter(City.name.like(f'%{city}%')).all()
-    return render_template('index_homepage.html', city=city)
-
+    weather_forecast = get_weather_forecast(res, API_KEY)
+    is_user_logged_in = CURR_USER_KEY in session
+    print(is_user_logged_in)
+    return render_template('show.html', w=weather_forecast['current'])
 
 #############################################################
 #####            FETCH API WEATHER RESULTS              #####
