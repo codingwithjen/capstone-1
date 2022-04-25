@@ -5,65 +5,49 @@
 {% block content %}
 
 
-
-{% raw %}
-<!-- <script id="result_template" type="text/html"> -->
-    <div class="card border-primary mb-3" style="max-width: 50rem;">
+<div class="card border-primary mb-3" style="max-width: 50rem;">
         <div class="card-header">Weather Results</div>
-
         <div class="card-body">
-        {{ #current }}
-        <h5><small class="text-muted">Current Date:&nbsp;&nbsp; {{ datetime }}</small></h5>
-        <h2><i class= "icon wi wi-owm-{{ iconcode }}"></i></h2>
-            <h4 class="card-title">{{ city }}, {{ country }}</h4>
-            <p class="card-text">{{ description }}</p>
-            <p class ="card-text"><h5> {{ fahrenheit }} °Fahrenheit</h5></p>
-            <p class="card-text"><h5> {{ celsius }} °Celsius</h5></p>
-            {{#bookmark}}
+        <h5><small class="text-muted">Current Date:&nbsp;&nbsp; {{ w.datetime }}</small></h5>
+        <h2><i class= "icon wi wi-owm-{{ w.iconcode }}"></i></h2>
+            <h4 class="card-title">{{ w.city }}, {{ w.country }}</h4>
+            <p class="card-text">{{ w.description }}</p>
+            <p class ="card-text"><h5> {{ w.fahrenheit }} °Fahrenheit</h5></p>
+            <p class="card-text"><h5> {{ w.celsius }} °Celsius</h5></p>
 
+            {% if is_user_logged_in %}
             <form action="/users/remove_city", method="POST">
                 <input name="city" type="text" value="{{ city }}" style = "display: None">
                 <button type="submit" class="btn btn-danger">Remove</button>
             </form>
-            {{/bookmark}}
-            {{^bookmark}}
-
+            {% else %}
             <form action="/users/bookmark_city", method="POST">
                 <input name="city" type="text" value="{{ city }}" style = "display: None">
                 <button type="submit" class="btn btn-outline-primary">Save</button>
             </form>
-            {{/bookmark}}
-        {{ /current }}
-
+            {% endif %}
+            <br>
         <div class="forecast-container">
             <div class="row">
-            {{ #forecast }}
-                <div class="col-sm">
                     <hr>
-                    <p class="h5">{{ datetime_day }}, {{ datetime_month }} {{ datetime_date }}</p>
-                    <p><i class= "icon wi wi-owm-{{ iconcode }}"></i></p>
-                    <p>{{ fahrenheit }} °Fahrenheit <br>{{ celsius }} °Celsius</p>
-                </div>
-            {{ /forecast }}
+                    {% for i in f %}
+                    <div class="col-sm">
+                    <p class="h5">{{ i.datetime_day }}, {{ i.datetime_month }} {{ i.datetime_date }}</p>
+                    <p><i class= "icon wi wi-owm-{{ i.iconcode }}"></i></p>
+                    <p>{{ i.fahrenheit }} °Fahrenheit <br>{{ i.celsius }} °Celsius</p>
+                    </div>
+                    {% endfor %}
             </div>
         </div>
-        </div>
     </div>
-<!-- </script> -->
-<div id="result"></div>
-{% endraw %}
-
-
 
 
 {% block scripts %}
     <!-- AJAX | Google Hosted Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
-    <script src="{{ url_for('static', filename='fetch.js') }}"></script>
 
     <!-- Mustache -->
     <script src="https://cdn.jsdelivr.net/npm/mustache@4.2.0-beta.0/mustache.min.js"></script>
 {% endblock scripts %}
-
 {% endblock %}

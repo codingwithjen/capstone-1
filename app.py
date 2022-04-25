@@ -1,6 +1,7 @@
 """Your Weather Flask Application."""
 
 import os, json, string, requests
+import re
 # from dotenv import load_dotenv
 from datetime import datetime
 from models import connect_db, db, User, City
@@ -27,8 +28,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 
 # toolbar = DebugToolbarExtension(app)
-
 # load_dotenv()
+
 connect_db(app)
 
 #############################################################
@@ -59,8 +60,6 @@ def do_logout():
 
 #############################################################
 #####                Helper Decorators                  #####
-#############################################################
-
 #############################################################
 # Conversion
 
@@ -103,16 +102,18 @@ def get_weather_data(city):
 #############################################################
 # 5-Day Forecast
 
-def get_daily_forecast(daily_weather):
+def get_daily_forecast(daily):
 
+    # Adding elements to a Dictionary
     daily_forecast = []
-    for item in daily_weather[:-3]:
+    for item in daily[1:-2]:
 
         # DF = "daily forecast"
+        # Creating an empty dictionary
         DF = {}
-        DF['datetime_day'] = day(item['dt'])[:5]
-        DF['datetime_month'] = month(item['dt'])[:5]
-        DF['datetime_date'] = date(item['dt'])[:5]
+        DF['datetime_day'] = day(item['dt'])
+        DF['datetime_month'] = month(item['dt'])
+        DF['datetime_date'] = date(item['dt'])
         DF['iconcode'] = item['weather'][0]['id']
         DF['fahrenheit'] = kelvin_to_fahrenheit(item['temp']['day'])
         DF['celsius'] = kelvin_to_celsius(item['temp']['day'])
@@ -139,7 +140,8 @@ def get_weather_forecast(res, API_KEY):
             'celsius': kelvin_to_celsius(res['main']['temp']),
             'description': res['weather'][0]['description'].title(),
             'iconcode': res['weather'][0]['id'],
-            'datetime': timestamp_to_datetime(forecast_res['current']['dt'])
+            'datetime': timestamp_to_datetime(forecast_res['current']['dt']),
+            'forecast': get_daily_forecast(forecast_res['daily']),
         },
         'forecast': get_daily_forecast(forecast_res['daily'])
     }
@@ -161,8 +163,7 @@ def index_homepage():
     return render_template('index_homepage.html', form=form)
 
 #############################################################
-#####                     Results                       #####
-#############################################################
+
 @app.route('/show', methods=['GET', 'POST'])
 def show_results():
     """Once city has been entered on the homepage, this will
@@ -171,9 +172,13 @@ def show_results():
     city = request.args.get('city')
     return render_template('show.html', city=city)
 
+#############################################################
+#####                     Results                       #####
+#############################################################
+
 @app.route('/search', methods=['GET', 'POST'])
 def search_city():
-    """Handle GET Requests like /search?city=Seattle"""
+    """Handle GET Requests like /search?q=seattle"""
 
     city = request.args.get('q')
     url = f'{API_BASE_URL}/data/2.5/weather?q={city},us&appid={API_KEY}'
@@ -181,52 +186,14 @@ def search_city():
 
     # Error Message
     if res.get('cod') !=200:
-        message = res.get('message', '')
-        return f'Error getting weather for {city}. Error message = {message}'
-    weather_forecast = get_weather_forecast(res, API_KEY)
-    is_user_logged_in = CURR_USER_KEY in session
-    print(is_user_logged_in)
-    return render_template('show.html', w=weather_forecast['current'])
-
-#############################################################
-#####            FETCH API WEATHER RESULTS              #####
-#############################################################
-@app.route('/fetch', methods=['GET', 'POST'])
-def fetch():
-    """API endpoint to fetch weather results."""
-
-    city = request.form['city']
-    zipcode = ''
-
-    if not city and not zipcode:
-        return jsonify({'error': 'Invalid... Please try again'})
-
-    elif city:
-        city = city.lower()
-        city = string.capwords(city)
-        url = f'{API_BASE_URL}/data/2.5/weather?q={city},us&appid={API_KEY}'
-
-    # OpenWeatherAPI Response
-
-    res = requests.get(url).json()
-
-    if res.get('cod') != 200:
-        message = res.get('message', '')
-        return jsonify({'error': message})
-
+        flash(f'Error getting weather data for "{city}"', 'warning')
+        return redirect('/')
     else:
         weather_forecast = get_weather_forecast(res, API_KEY)
 
-    if CURR_USER_KEY in session:
-        user_id = g.user.id
-        user = User.query.get_or_404(user_id)
-        user = User.query.filter_by(id=user.id).first()
-        user_cities = user.cities
-        if city.lower() in [c.name.lower() for c in user_cities]:
-            weather_forecast['bookmark'] = True
-
-    return jsonify(weather_forecast)
-
+    is_user_logged_in = CURR_USER_KEY in session
+    print(is_user_logged_in)
+    return render_template('show.html', w=weather_forecast['current'], f=weather_forecast['forecast'])
 
 #############################################################
 #####               Sign-Up User Page                   #####
