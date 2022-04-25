@@ -1,6 +1,7 @@
 #  Weather Flask Search
 
 **Live Demo/Deployed Web App:** <https://weatherflasksearch.herokuapp.com/>
+
 **External API Used:** <https://openweathermap.org/api>
 
 ## Description
