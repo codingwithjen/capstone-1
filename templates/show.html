@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Weather Flask Search{% endblock %}
+{% block title %}Search Results{% endblock %}
 
 {% block content %}
 
@@ -15,17 +15,26 @@
             <p class ="card-text"><h5> {{ w.fahrenheit }} °Fahrenheit</h5></p>
             <p class="card-text"><h5> {{ w.celsius }} °Celsius</h5></p>
 
-            {% if is_user_logged_in %}
-            <form action="/users/remove_city", method="POST">
-                <input name="city" type="text" value="{{ city }}" style = "display: None">
-                <button type="submit" class="btn btn-danger">Remove</button>
+            {% if g.user %}
+            {% if show_delete %}
+            <form action="/users/remove" method="POST">
+                <input id="city" name="city" type="text" value="{{ city }}" style="display:none">
+                <button type="submit" class="btn btn-outline-info">Remove</button>
             </form>
             {% else %}
-            <form action="/users/bookmark_city", method="POST">
+            <form action="/users/like", method="POST">
                 <input name="city" type="text" value="{{ city }}" style = "display: None">
                 <button type="submit" class="btn btn-outline-primary">Save</button>
             </form>
             {% endif %}
+            {% else %}
+            <form action="/users/like", method="POST">
+                <input name="city" type="text" value="{{ city }}" style = "display: None">
+                <button type="submit" class="btn btn-outline-primary">Save</button>
+            </form>
+            {% endif %}
+            
+
             <br>
         <div class="forecast-container">
             <div class="row">
@@ -34,6 +43,7 @@
                     <div class="col-sm">
                     <p class="h5">{{ i.datetime_day }}, {{ i.datetime_month }} {{ i.datetime_date }}</p>
                     <p><i class= "icon wi wi-owm-{{ i.iconcode }}"></i></p>
+                    <p class="text-muted">{{ i.description }}</p>
                     <p>{{ i.fahrenheit }} °Fahrenheit <br>{{ i.celsius }} °Celsius</p>
                     </div>
                     {% endfor %}

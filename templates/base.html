@@ -28,7 +28,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Urbanist&display=swap" rel="stylesheet">
 
-    <title>{% block title %}Weather Flask Search{% endblock %}</title>    
+    <title>{% block title %}{% endblock %} - Weather Flask Search</title>    
     <link rel="shortcut icon" href="/static/icon.ico">
   </head>
 
@@ -81,7 +81,7 @@
               <li class="nav-item">
                 <a
                   class="nav-link"
-                  href="/users/dashboard"   
+                  href="/users/{{ g.user.id }}"   
                   >Dashboard
                 </a>
               </li>

@@ -25,9 +25,3 @@ class WeatherForm(FlaskForm):
 
     city = StringField("City", validators=[DataRequired()], render_kw={"placeholder": "Enter a city "})
     submit = SubmitField("Search")
-
-class SearchForm(FlaskForm):
-    """Form to Handle GET Requests like /search?city=Seattle"""
-
-    city = StringField("City", validators=[DataRequired()], render_kw={"placeholder": "Enter a city "})
-    submit = SubmitField("Search")

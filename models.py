@@ -1,13 +1,11 @@
 """Database models for Weather Flask Application."""
-
-import os
+from datetime import datetime
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 
-# Create the User Model
 class User(db.Model):
     """Users in our database."""
 
@@ -17,10 +15,8 @@ class User(db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
-    cities = db.relationship('City', backref='user', lazy=True)
-
-    def __repr__(self):
-        return f"<User #{self.id}: {self.username}, {self.email}>"
+    cities = db.relationship('City')
+    likes = db.relationship('City', secondary='likes')
 
     @classmethod
     def signup(cls, username, email, password):
@@ -57,8 +53,6 @@ class User(db.Model):
     
         return False
 
-
-# Create the City Model
 class City(db.Model):
     """City Model."""
 
@@ -66,12 +60,18 @@ class City(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'), nullable=False)
 
 
-    def __repr__(self):
-        return f"City('{self.city_name}', '{self.user_id}'"
+class Likes(db.Model):
+    """Mapping user likes."""
 
+    __tablename__ = 'likes'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'))
+    city_id = db.Column(db.Integer, db.ForeignKey('cities.id', ondelete='cascade'))
 
 # DO NOT MODIFY
 def connect_db(app):

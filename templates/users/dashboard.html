@@ -5,41 +5,38 @@
 {% block content %}
 
 <div class="card mb-3" style="max-width: 60rem;">
-    <h3 class="card-header">User's Dashboard</h3>
+    <h3 class="card-header">{{ g.user.username}}'s Dashboard</h3>
     <div class="card-body">
-        <h4 class="card-subtitle text-muted">City Bookmarks</h4>
+        <h4 class="card-subtitle text-muted">Welcome to your city bookmarks!</h4>
+        <p>Please click on a city below to see the weather forecast:</p>
     </div>
     <div class="forecast-container" style="max-width: 60rem;">
-        {% if cities %}
         <div class="row">
+        {% if cities %}
             {% for city in cities %}
             <div class="col-sm">
-                <h5>{{ city.name }}</h5>
-                <h2><i class= "icon wi wi-owm-{{ city.iconcode }}"></i></h2>
-                <p><span class="badge bg-light">{{ city.description }}</span></p>
-                <p><span class="badge bg-secondary">{{ city.fahrenheit }} °Fahrenheit</span></p>
-                <p><span class="badge bg-secondary">{{ city.celsius }} °Celsius</span></p>
-                <div>
-                <p><a href="{{ url_for('delete_city', name=city.name) }}">
-                <button type="button" class="btn btn-danger">Remove</button>
-            </a></p>
-                </div>
+                <button type="button" class="btn btn-primary btn-lg" style="text-transform: capitalize"><a href="/search?q={{city.name}}">{{ city.name }}</a></button>
+                <p></p>
+                <p><button type="button" class="btn btn-danger btn-sm"><a href="{{ url_for('delete_city', name=city.name) }}">Remove</a></button></p>
             </div>
             {% endfor %}
         </div>
-                    </div>
-    {% else %}
-        <p>No Cities Saved</p>
-    {% endif %}
     </div>
-    {% if g.user %}
-    <div class="delete_user" style="text-align: center;">
-        <form method="POST" action="/users/delete">
-            <button class="btn btn-outline-secondary">Delete Account</button>
-     </form>
+    <div>
+        {% else %}
+            <p>No Cities Saved</p>
+        {% endif %}
     </div>
-    {% endif %}
 </div>
+{% if g.user.id == user.id %}
+<div class="delete_user" style="text-align: center;">
+
+    <form method="POST" action="{{ url_for('delete_user') }}">
+        <button class="btn btn-outline-secondary">Delete Account</button>
+ </form>
+
+</div>
+{% endif %}
 
 
 
