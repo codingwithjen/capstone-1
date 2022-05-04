@@ -19,6 +19,7 @@
   "homepage": "https://github.com/codingwithjen/capstone-1#readme",
   "dependencies": {
     "axios": "^0.25.0",
+    "heroku": "^7.60.2",
     "mustache": "^4.2.0"
   }
 }
