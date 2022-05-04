@@ -18,8 +18,8 @@ API_BASE_URL = "https://api.openweathermap.org/"
 
 app = Flask(__name__)
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL').replace("://", "ql://", 1) or 'postgresql:///weatherflasksearch'
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql:///weatherflasksearch')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL').replace("://", "ql://", 1) or 'postgresql:///weatherflasksearch'
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql:///weatherflasksearch')
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -89,6 +89,15 @@ def date(ts, timezone_offset=0):
     ts = ts + timezone_offset
     return datetime.fromtimestamp(ts).strftime("%d")
 
+
+#############################################################
+# Weather Data for the Dashboard
+def get_weather_data(city):
+    url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}'
+    r = requests.get(url).json()
+    return r
+
+
 #############################################################
 # 5-Day Forecast
 
@@ -153,7 +162,7 @@ def search_city():
     """Handle Requests like /search?q=seattle"""
 
     city = request.args.get('q')
-    if not city or None:
+    if not city:
         flash('Did you enter a valid city? Please recheck spelling and try again!', 'warning')
         return redirect(url_for('index_homepage'))
 
@@ -246,14 +255,18 @@ def user_dashboard(user_id):
 
     if user:
         user_cities = City.query.filter_by(user_id=user_id).order_by(City.id.desc()).all()
-
         cities = []
         for city in user_cities:
+            r = get_weather_data(city.name)
             city = {'name': city.name,
-                    'id': city.id,}
+                    'fahrenheit': kelvin_to_fahrenheit(r['main']['temp']),
+                    'celsius': kelvin_to_celsius(r['main']['temp']),
+                    'description': r['weather'][0]['description'].title(),
+                    'iconcode': r['weather'][0]['id'],}
             cities.append(city)
-        
         return render_template('users/dashboard.html', user=user, cities=cities, show_delete=True)
+    else:
+        return render_template('users/dashboard.html')
 
 
 @app.route('/users/like', methods=['GET', 'POST'])
@@ -278,7 +291,7 @@ def add_like():
             flash('Oh hayyy!!! You added this city to your bookmarks!', 'success')
         else:
             flash('This city is already in your favorites!', 'warning')
-    return redirect(url_for('search_city'))
+        return redirect(url_for('index_homepage'))
 
 @app.route('/users/remove', methods=['GET', 'POST'])
 def remove_like():

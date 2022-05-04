@@ -17,6 +17,11 @@
             <div class="col-sm">
                 <button type="button" class="btn btn-primary btn-lg" style="text-transform: capitalize"><a href="/search?q={{city.name}}">{{ city.name }}</a></button>
                 <p></p>
+                <p><span class="badge bg-light">{{ city.description }}</span></p>
+                <h2><i class= "icon wi wi-owm-{{ city.iconcode }}"></i></h2>
+                <p><span class="badge bg-secondary">{{ city.fahrenheit }} °Fahrenheit</span></p>
+                <p><span class="badge bg-secondary">{{ city.celsius }} °Celsius</span></p>
+                <p></p>
                 <p><button type="button" class="btn btn-danger btn-sm"><a href="{{ url_for('delete_city', name=city.name) }}">Remove</a></button></p>
             </div>
             {% endfor %}
