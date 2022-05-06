@@ -178,7 +178,7 @@ def search_city():
     else:
         weather_forecast = get_weather_forecast(res, API_KEY)
 
-    return render_template('show.html', w=weather_forecast['current'], f=weather_forecast['forecast'], city=city)
+    return render_template('show.html', w=weather_forecast['current'], f=weather_forecast['forecast'], city=city, form=form)
 
 #############################################################
 #####               Sign-Up User Page                   #####
@@ -266,7 +266,7 @@ def user_dashboard(user_id):
                     'description': r['weather'][0]['description'].title(),
                     'iconcode': r['weather'][0]['id'],}
             cities.append(city)
-        return render_template('users/dashboard.html', form=form, user=user, cities=cities, show_delete=True)
+        return render_template('users/dashboard.html', user=user, cities=cities, show_delete=True)
     else:
         return render_template('users/dashboard.html')
 
