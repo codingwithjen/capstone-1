@@ -4,7 +4,14 @@
 
 {% block content %}
 
-
+<div class="card border-primary mb-3" style="max-width: 50rem;">
+    <div class="card-body">
+        <form methods="POST" action="/search"class="d-flex">
+            <input name="q" class="form-control me-sm-2" placeholder="Enter a city" id="city" aria-required="true">
+            <button type="submit" class="form-control form-control-lg btn btn-info my-2 my-sm-0">Search</button>
+        </form>
+    </div>
+</div>
 <div class="card border-primary mb-3" style="max-width: 50rem;">
         <div class="card-header">Weather Results</div>
         <div class="card-body">

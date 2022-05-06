@@ -161,6 +161,8 @@ def index_homepage():
 def search_city():
     """Handle Requests like /search?q=seattle"""
 
+    form = WeatherForm(request.form)
+
     city = request.args.get('q')
     if not city:
         flash('Did you enter a valid city? Please recheck spelling and try again!', 'warning')
@@ -264,7 +266,7 @@ def user_dashboard(user_id):
                     'description': r['weather'][0]['description'].title(),
                     'iconcode': r['weather'][0]['id'],}
             cities.append(city)
-        return render_template('users/dashboard.html', user=user, cities=cities, show_delete=True)
+        return render_template('users/dashboard.html', form=form, user=user, cities=cities, show_delete=True)
     else:
         return render_template('users/dashboard.html')
 
